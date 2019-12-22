@@ -1,0 +1,361 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "0a65636d3da76a029227f4a94bcb3b65",
+    "packages": [
+        {
+            "name": "firebase/php-jwt",
+            "version": "v5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/firebase/php-jwt.git",
+                "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://pkg.webbmaffian.se/dist/firebase/php-jwt/firebase-php-jwt-9984a4d3a32ae7673d6971ea00bae9d0a1abba0e-zip-333b39.zip",
+                "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
+                "shasum": "63132a03859614af2bc3f238b5e2b229801a1da7"
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": " 4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Firebase\\JWT\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Neuman Vong",
+                    "email": "neuman+pear@twilio.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Anant Narayanan",
+                    "email": "anant@php.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
+            "homepage": "https://github.com/firebase/php-jwt",
+            "time": "2017-06-27T22:17:23+00:00"
+        },
+        {
+            "name": "josegonzalez/dotenv",
+            "version": "3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/josegonzalez/php-dotenv.git",
+                "reference": "f19174d9d7213a6c20e8e5e268aa7dd042d821ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://pkg.webbmaffian.se/dist/josegonzalez/dotenv/josegonzalez-dotenv-f19174d9d7213a6c20e8e5e268aa7dd042d821ca-zip-ab79a0.zip",
+                "reference": "f19174d9d7213a6c20e8e5e268aa7dd042d821ca",
+                "shasum": "de4560ad6614705dfaee65a78a9ae026d7a091be"
+            },
+            "require": {
+                "m1/env": "2.*",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "php-mock/php-mock-phpunit": "^1.1",
+                "satooshi/php-coveralls": "1.*",
+                "squizlabs/php_codesniffer": "2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "josegonzalez\\Dotenv": [
+                        "src",
+                        "tests"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jose Diaz-Gonzalez",
+                    "email": "dotenv@josegonzalez.com",
+                    "homepage": "http://josediazgonzalez.com",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "dotenv file parsing for PHP",
+            "homepage": "https://github.com/josegonzalez/php-dotenv",
+            "keywords": [
+                "configuration",
+                "dotenv",
+                "php"
+            ],
+            "time": "2017-09-19T15:49:58+00:00"
+        },
+        {
+            "name": "m1/env",
+            "version": "2.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/m1/Env.git",
+                "reference": "294addeedf15e1149eeb96ec829f2029d2017d39"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://pkg.webbmaffian.se/dist/m1/env/m1-env-294addeedf15e1149eeb96ec829f2029d2017d39-zip-8d0e9a.zip",
+                "reference": "294addeedf15e1149eeb96ec829f2029d2017d39",
+                "shasum": "6bd16d32d37f92feda161108d2446a010c5aacaf"
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*",
+                "scrutinizer/ocular": "~1.1",
+                "squizlabs/php_codesniffer": "^2.3"
+            },
+            "suggest": {
+                "josegonzalez/dotenv": "For loading of .env",
+                "m1/vars": "For loading of configs"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "M1\\Env\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Miles Croxford",
+                    "email": "hello@milescroxford.com",
+                    "homepage": "http://milescroxford.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Env is a lightweight library bringing .env file parser compatibility to PHP. In short - it enables you to read .env files with PHP.",
+            "homepage": "https://github.com/m1/Env",
+            "keywords": [
+                ".env",
+                "config",
+                "dotenv",
+                "env",
+                "loader",
+                "m1",
+                "parser",
+                "support"
+            ],
+            "time": "2018-06-19T18:55:08+00:00"
+        },
+        {
+            "name": "malios/php-to-ascii-table",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/malios/php-to-ascii-table.git",
+                "reference": "cdabb1c694dffd2dbc3944fcaa62f4a1bb2f5e65"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://pkg.webbmaffian.se/dist/malios/php-to-ascii-table/malios-php-to-ascii-table-cdabb1c694dffd2dbc3944fcaa62f4a1bb2f5e65-zip-73bd06.zip",
+                "reference": "cdabb1c694dffd2dbc3944fcaa62f4a1bb2f5e65",
+                "shasum": "331da0bb7d45b9fd48ec1e041e988a1242830333"
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7",
+                "php-ds/php-ds": "^1.1"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.6.4",
+                "phpunit/phpunit": "^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "AsciiTable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mehmed Aliosman",
+                    "email": "dev.mehmed.aliosman@gmail.com"
+                }
+            ],
+            "description": "A PHP library to generate plain text tables.",
+            "keywords": [
+                "ascii",
+                "php",
+                "plain text table",
+                "table"
+            ],
+            "time": "2017-04-01T16:37:32+00:00"
+        },
+        {
+            "name": "php-ds/php-ds",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-ds/polyfill.git",
+                "reference": "27bed3897f9c801604f5bdcb65b71eb61ec80099"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://pkg.webbmaffian.se/dist/php-ds/php-ds/php-ds-php-ds-27bed3897f9c801604f5bdcb65b71eb61ec80099-zip-f3bab5.zip",
+                "reference": "27bed3897f9c801604f5bdcb65b71eb61ec80099",
+                "shasum": "4573d13a36311b4479b67554c8b002d648f8a6e5"
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "php-ds/tests": "^1.2"
+            },
+            "suggest": {
+                "ext-ds": "to improve performance and reduce memory usage"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ds\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rudi Theunissen",
+                    "email": "rudolf.theunissen@gmail.com"
+                }
+            ],
+            "keywords": [
+                "data structures",
+                "ds",
+                "php",
+                "polyfill"
+            ],
+            "time": "2017-08-03T02:03:34+00:00"
+        },
+        {
+            "name": "webbmaffian/mvc",
+            "version": "v1.10.7",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:webbmaffian/mvc.git",
+                "reference": "9a2e4212af4379469e2e69e6e78d8eb9adaa1a75"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://pkg.webbmaffian.se/dist/webbmaffian/mvc/webbmaffian-mvc-9a2e4212af4379469e2e69e6e78d8eb9adaa1a75-zip-c1bbd7.zip",
+                "reference": "9a2e4212af4379469e2e69e6e78d8eb9adaa1a75",
+                "shasum": "b04f6b6c263293a47bff97026d1943988cc46dcb"
+            },
+            "require": {
+                "ext-mysqli": "*",
+                "firebase/php-jwt": "^5.0",
+                "josegonzalez/dotenv": "*",
+                "malios/php-to-ascii-table": "^1.0.1",
+                "php": "^7.0.0",
+                "webbmaffian/orm": "^1.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Webbmaffian\\MVC\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Mattias Forsman",
+                    "email": "mattias@webbmaffian.se"
+                },
+                {
+                    "name": "Ivar Johansson",
+                    "email": "ivar@webbmaffian.se"
+                }
+            ],
+            "description": "Webbmaffian MVC framework",
+            "support": {
+                "source": "https://github.com/webbmaffian/mvc/tree/v1.10.7",
+                "issues": "https://github.com/webbmaffian/mvc/issues"
+            },
+            "time": "2019-12-09T12:58:19+00:00"
+        },
+        {
+            "name": "webbmaffian/orm",
+            "version": "v1.4.1",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:webbmaffian/orm.git",
+                "reference": "374eee5d5d9f03c5d890431455169e429d350637"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://pkg.webbmaffian.se/dist/webbmaffian/orm/webbmaffian-orm-374eee5d5d9f03c5d890431455169e429d350637-zip-419d0c.zip",
+                "reference": "374eee5d5d9f03c5d890431455169e429d350637",
+                "shasum": "eddc29e897c709b197120cf2e32c9dc702ec4a91"
+            },
+            "require": {
+                "ext-mysqli": "*",
+                "php": "^7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Webbmaffian\\ORM\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Mattias Forsman",
+                    "email": "mattias@webbmaffian.se"
+                },
+                {
+                    "name": "Ivar Johansson",
+                    "email": "ivar@webbmaffian.se"
+                }
+            ],
+            "support": {
+                "source": "https://github.com/webbmaffian/orm/tree/v1.4.1",
+                "issues": "https://github.com/webbmaffian/orm/issues"
+            },
+            "time": "2019-11-18T10:08:08+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

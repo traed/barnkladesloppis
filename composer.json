@@ -1,0 +1,28 @@
+{
+	"name": "mattias/bkl-plugin",
+	"type": "project",
+	"license": "MIT",
+	"description": "",
+    "authors": [
+        {
+            "name": "Mattias Forsman",
+            "email": "mattias@webbmaffian.se"
+		},
+		{
+			"name": "Ivar Johansson",
+			"email": "ivar@webbmaffian.se"
+		}
+	],
+	"config": {
+		"classmap-authoritative": true
+	},
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "https://pkg.webbmaffian.se"
+		}
+	],
+    "require": {
+		"webbmaffian/mvc": "^1.10"
+	}
+}
