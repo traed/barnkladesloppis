@@ -35,6 +35,11 @@ abstract class Plugin {
 		if(file_exists(self::PATH . '/vendor/autoload.php')) {
 			require_once(self::PATH . '/vendor/autoload.php');
 		}
+
+		add_action('init', array($this, 'add_custom_post_type'));
+		add_action('add_meta_boxes', array($this, 'add_custom_meta_box'));
+		add_action('save_post', array($this, 'save_meta_fields'));
+		add_action('new_to_publish', array($this, 'save_meta_fields'));
 		
 		$this->init();
 	}
@@ -43,32 +48,6 @@ abstract class Plugin {
 	public function install() {
 		$admin_role = add_role('bkl_admin', 'Loppis-admin');
 		$seller_role = add_role('bkl_seller', 'Loppis-säljare');
-
-		if($admin_role instanceof \WP_Role) {
-			$admin_role->add_cap('bkl-view');
-			$admin_role->add_cap('bkl-edit');
-			$admin_role->add_cap('bkl-sell');
-		}
-
-		if($seller_role instanceof \WP_Role) {
-			$admin_role->add_cap('bkl-view');
-			$admin_role->add_cap('bkl-sell');
-		}
-
-		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-		$tables = [];
-		$charset = 'DEFAULT CHARACTER SET utf8 COLLATE utf8_swedish_ci';
-
-		$tables[] = 'CREATE TABLE IF NOT EXISTS ' . Occasion::get_table() . ' (
-			id int NOT NULL AUTO_INCREMENT,
-			date_start date NOT NULL,
-			date_signup date NOT NULL,
-			PRIMARY KEY (id)
-		) ' . $charset;
-		
-		foreach($tables as $table) {
-			dbDelta($table . ' ' . $charset);
-		}
 	}
 	
 	
@@ -88,6 +67,95 @@ abstract class Plugin {
 			
 			include($path);
 		}
+	}
+
+
+	public function add_custom_post_type() {
+		register_post_type('bkl_occasion', [
+			'labels' => [
+				'name'                     => 'Loppisar',
+				'singular_name'            => 'Loppis',
+				'add_new_item'             => 'Skapa ny loppis',
+				'new_item'                 => 'Ny loppis',
+				'edit_item'                => 'Redigera loppis',
+				'view_item'                => 'Visa loppis',
+				'all_items'                => 'Alla loppisar',
+				'search_items'             => 'Sök loppisar',
+				'not_found'                => 'Hittade inga loppisar',
+				'not_found_in_trash'       => 'Inga loppisar hittades i papperskorgen.'
+			],
+			'description' => 'Ett loppistillfälle',
+			'show_ui' => true,
+			'show_in_menu' => true,
+			'show_in_rest' => true,
+			'exclude_from_search' => true,
+			// 'capability_type' => Plugin::SLUG,
+			'supports' => ['title', 'editor', 'revisions', 'thumbnail']
+		]);
+	}
+
+
+	public function add_custom_meta_box() {
+		add_meta_box('bkl_settings', 'Inställningar', array($this, 'occasion_meta_box_callback'), 'bkl_occasion', 'side');
+	}
+
+
+	public function occasion_meta_box_callback() {
+		global $post;
+
+		$date_start = get_post_meta($post->ID, 'date_start', true) ?: '';
+		$date_signup = get_post_meta($post->ID, 'date_signup', true) ?: '';
+		$num_spots = get_post_meta($post->ID, 'num_spots', true) ?: '';
+		$seller_fee = get_post_meta($post->ID, 'seller_fee', true) ?: '';
+
+		wp_nonce_field('bkl_occasion_save', 'bkl_metabox_nonce');
+		?>
+		<div>
+			<label for="date_signup">Anmälan öppnar</label>
+			<input type="date" name="date_signup" value="<?php echo $date_signup; ?>">
+		</div>
+		<div>
+			<div><label for="date_start">Startdatum</label></div>
+			<input type="date" name="date_start" id="date_start" value="<?php echo $date_start; ?>">
+		</div>
+		<div>
+			<div><label for="num_spots">Antal platser</label></div>
+			<input type="number" name="num_spots" id="num_spots" value="<?php echo $num_spots; ?>">
+		</div>
+		<div>
+			<div><label for="seller_fee">Avgift (kr)</label></div>
+			<input type="number" name="seller_fee" id="seller_fee" value="<?php echo $seller_fee; ?>">
+		</div>
+		<?php
+	}
+
+
+	public function save_meta_fields($post_id) {
+		if(!isset($_POST['bkl_metabox_nonce']) || !wp_verify_nonce($_POST['bkl_metabox_nonce'], 'bkl_occasion_save')) {
+			return 'nonce not verified';
+		}
+
+		if(wp_is_post_autosave($post_id)) {
+			return 'autosave';
+		}
+	
+	  	if(wp_is_post_revision($post_id)) {
+			return 'revision';
+		}
+
+		// if($_POST['post_type'] === 'bkl_occasion') {
+		// 	if(!current_user_can('edit_bkl_occasion', $post_id)) {
+		// 		return 'cannot edit occasion';
+		// 	}
+		// }
+
+		$date_start = strtotime($_POST['date_start']) ? $_POST['date_start'] : '';
+		$date_signup = strtotime($_POST['date_signup']) ? $_POST['date_signup'] : '';
+
+		update_post_meta($post_id, 'date_start', $date_start);
+		update_post_meta($post_id, 'date_signup', $date_signup);
+		update_post_meta($post_id, 'num_spots', (int)$_POST['num_spots']);
+		update_post_meta($post_id, 'seller_fee', (int)$_POST['seller_fee']);
 	}
 	
 	

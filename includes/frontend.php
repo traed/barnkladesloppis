@@ -15,8 +15,6 @@
 		
 		
 		public function route() {
-			$query = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
-
 			try {
 				$router = new Router(include(self::PATH . '/app/routes.php'));
 				$path = parse_url(get_site_url(), PHP_URL_PATH);

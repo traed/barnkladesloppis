@@ -1,1 +1,4 @@
-<h1>Loppis start</h1>
+<?php namespace eqhby\bkl; ?>
+
+<h1><?php echo $title; ?></h1>
+
