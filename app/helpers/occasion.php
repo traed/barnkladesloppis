@@ -156,17 +156,39 @@ class Occasion {
 	}
 
 
-	public function add_user($user_id) {
+	public function get_user_status($user_id) {
+		global $wpdb;
+
+		$query = $wpdb->prepare('
+			SELECT status
+			FROM ' . Helper::get_table('occasion_users') . '
+			WHERE occasion_id = %d AND user_id = %d
+		', $this->get_ID(), $user_id);
+
+		return $wpdb->get_var($query) ?: 'none';
+	}
+
+
+	public function add_user($user_id, $status = false) {
 		global $wpdb;
 		
-		$status = $this->count_users('signed_up') < $this->get_num_spots() ? 'signed_up' : 'reserve';
+		if(!$status) {
+			$status = $this->count_users('signed_up') < $this->get_num_spots() ? 'signed_up' : 'reserve';
+		}
+
+		$seller_number = (int)get_user_meta($user_id, 'seller_number', true);
+		if(empty($seller_number)) {
+			$seller_number = self::get_seller_number();
+			update_user_meta($user_id, 'seller_number', $seller_number);
+		}
+
 		$created = Helper::date('now')->format('Y-m-d H:i:s');
 
 		$query = $wpdb->prepare('
-			INSERT INTO ' . Helper::get_table('occasion_users') . ' (occasion_id, user_id, time_created, status)
-			VALUES (%d, %d, %s, %s)
-			ON DUPLICATE KEY UPDATE time_created = %s
-		', $this->get_ID(), $user_id, $created, $status, $created);
+			INSERT INTO ' . Helper::get_table('occasion_users') . ' (occasion_id, user_id, time_created, time_updated, status)
+			VALUES (%d, %d, %s, %s, %s)
+			ON DUPLICATE KEY UPDATE time_updated = %s, status = %s
+		', $this->get_ID(), $user_id, $created, $created, $status, $created, $status);
 
 		return $wpdb->query($query) !== false ? $status : false;
 	}

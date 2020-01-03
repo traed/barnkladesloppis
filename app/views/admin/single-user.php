@@ -63,17 +63,25 @@ namespace eqhby\bkl; ?>
 						<button type="button" class="button" id="clear_seller_number">Rensa</button>
 					</td>
 				</tr>
+
+				<?php if($can_sign_up): ?>
+				<tr>
+					<th scope="row"><label for="next_status">Status för kommande loppis</label></th>
+					<td>
+						<select name="status" id="next_status">
+							<option value="none">Ej anmäld</option>
+							<option value="signed_up"<?php echo $status === 'signed_up' ? ' selected' : ''; ?>>Anmäld</option>
+							<option value="reserve"<?php echo $status === 'reserve' ? ' selected' : ''; ?>>Reserv</option>
+						</select>
+					</td>
+				</tr>
+				<?php endif; ?>
 			</tbody>
 		</table>
 
 		<?php wp_nonce_field('bkl_edit_user'); ?>
 		<input type="hidden" name="original_email" value="<?php echo $user->get('user_email'); ?>">
 		<input type="hidden" name="controller" value="Users">
-		<p class="submit">
-			<button type="submit" class="button button-primary" name="action" value="edit_user">Spara ändringar</button>
-			<?php if($can_sign_up): ?>
-				<button type="submit" class="button" name="action" value="sign_up">Anmäl till loppis</button>
-			<?php endif; ?>
-		</p>
+		<p class="submit"><button type="submit" class="button button-primary" name="action" value="edit_user">Spara ändringar</button></p>
 	</form>
 </div>

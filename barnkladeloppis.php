@@ -82,6 +82,7 @@ abstract class Plugin {
 				occasion_id int NOT NULL,
 				user_id int NOT NULL,
 				time_created datetime NOT NULL,
+				time_updated datetime NOT NULL,
 				status varchar(16) NOT NULL,
 				PRIMARY KEY (occasion_id, user_id)
 		) ' . $charset;
