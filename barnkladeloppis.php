@@ -40,6 +40,7 @@ abstract class Plugin {
 		add_action('add_meta_boxes', array($this, 'add_custom_meta_box'));
 		add_action('save_post', array($this, 'save_meta_fields'));
 		add_action('new_to_publish', array($this, 'save_meta_fields'));
+		add_filter('login_redirect', array($this, 'redirect_login'), 10, 3);
 		
 		$this->init();
 	}
@@ -172,6 +173,15 @@ abstract class Plugin {
 		update_post_meta($post_id, 'date_signup', $date_signup);
 		update_post_meta($post_id, 'num_spots', (int)$_POST['num_spots']);
 		update_post_meta($post_id, 'seller_fee', (int)$_POST['seller_fee']);
+	}
+
+
+	public function redirect_login($redirect_to, $requested_redirect_to, $user) {
+		if(in_array('bkl_seller', $user->roles)) {
+			$redirect_to = '/loppis';
+		}
+
+		return $redirect_to; 
 	}
 	
 	

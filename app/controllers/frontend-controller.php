@@ -12,19 +12,42 @@ class Frontend_Controller extends Controller {
 	}
 
 
-	public function init() {
+	public function login() {
+		if(is_user_logged_in()) {
+			wp_redirect('/loppis');
+		} else {
+			wp_redirect('/wp-login.php');
+		}
+
+		exit;
+	}
+
+
+	public function register() {
 		$this->handle_post();
 
-		$user = wp_get_current_user();
-		if(in_array('bkl_seller', $user->roles)) {
+		if(is_user_logged_in()) {
+			wp_redirect('/loppis');
+			exit;
+		}
+
+		include(Plugin::PATH . '/app/views/frontend/register.php');
+	}
+
+
+	public function init() {
+		$user = is_user_logged_in() ? wp_get_current_user() : false;
+
+		if(!$user) {
+			$this->show_loppis_logged_out();
+		} elseif(in_array('bkl_seller', $user->roles)) {
 			$this->show_logged_in_seller();
 		} elseif(in_array('bkl_admin', $user->roles)) {
 			wp_redirect('/wp-admin');
 			exit;
-		} elseif(is_user_logged_in()) {
-			$this->show_logged_in_no_role();
 		} else {
-			include(Plugin::PATH . '/app/views/frontend/login.php');
+			$user->add_role('bkl_seller');
+			$this->show_logged_in_seller();
 		}
 	}
 
@@ -38,9 +61,10 @@ class Frontend_Controller extends Controller {
 	}
 
 
-	protected function show_logged_in_no_role() {
+	protected function show_loppis_logged_out() {
 		$posts = Occasion::get_future();
-		$title = 'Barnklädesloppis Inget konto';
+		$next_occasion = Occasion::get_next();
+		$title = 'Barnklädesloppis';
 		$this->set_title($title);
 
 		include(Plugin::PATH . '/app/views/frontend/start.php');
