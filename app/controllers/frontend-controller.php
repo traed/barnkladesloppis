@@ -78,6 +78,9 @@ class Frontend_Controller extends Controller {
 				throw new Problem('Invalid input.');
 			}
 
+			$user = get_user_by('ID', $user_id);
+			$user->set_role('bkl_seller');
+
 			update_user_meta($user_id, 'first_name', $first_name);
 			update_user_meta($user_id, 'last_name', $last_name);
 			update_user_meta($user_id, 'phone', $phone);
