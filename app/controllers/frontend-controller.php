@@ -19,7 +19,8 @@ class Frontend_Controller extends Controller {
 		if(in_array('bkl_seller', $user->roles)) {
 			$this->show_logged_in_seller();
 		} elseif(in_array('bkl_admin', $user->roles)) {
-			$this->show_logged_in_admin();
+			wp_redirect('/wp-admin');
+			exit;
 		} elseif(is_user_logged_in()) {
 			$this->show_logged_in_no_role();
 		} else {
@@ -31,15 +32,6 @@ class Frontend_Controller extends Controller {
 	protected function show_logged_in_seller() {
 		$posts = $this->get_occasions();
 		$title = 'Barnklädesloppis Säljare';
-		$this->set_title($title);
-
-		include(Plugin::PATH . '/app/views/frontend/start.php');
-	}
-
-
-	protected function show_logged_in_admin() {
-		$posts = $this->get_occasions();
-		$title = 'Barnklädesloppis Admin';
 		$this->set_title($title);
 
 		include(Plugin::PATH . '/app/views/frontend/start.php');

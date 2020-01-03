@@ -46,8 +46,28 @@ abstract class Plugin {
 
 
 	public function install() {
-		$admin_role = add_role('bkl_admin', 'Loppis-admin');
-		$seller_role = add_role('bkl_seller', 'Loppis-säljare');
+		add_role(
+			'bkl_admin',
+			'Loppis-admin',
+			[
+				'read' => true,
+				'read_bkl_occasions' => true,
+				'edit_bkl_occasions' => true,
+				'edit_others_bkl_occasions' => true,
+				'publish_bkl_occasions' => true,
+				'read_private_bkl_occasions' => true,
+				'delete_bkl_occasions' => true,
+				'delete_private_bkl_occasions' => true,
+				'delete_published_bkl_occasions' => true,
+				'delete_others_bkl_occasions' => true,
+				'edit_private_bkl_occasions' => true,
+				'edit_published_bkl_occasions' => true,
+			]
+		);
+		add_role(
+			'bkl_seller',
+			'Loppis-säljare'
+		);
 	}
 	
 	
@@ -75,6 +95,7 @@ abstract class Plugin {
 			'labels' => [
 				'name'                     => 'Loppisar',
 				'singular_name'            => 'Loppis',
+				'add_new'                  => 'Skapa ny',
 				'add_new_item'             => 'Skapa ny loppis',
 				'new_item'                 => 'Ny loppis',
 				'edit_item'                => 'Redigera loppis',
@@ -89,7 +110,8 @@ abstract class Plugin {
 			'show_in_menu' => true,
 			'show_in_rest' => true,
 			'exclude_from_search' => true,
-			// 'capability_type' => Plugin::SLUG,
+			'map_meta_cap' => true,
+			'capability_type' => 'bkl_occasion',
 			'supports' => ['title', 'editor', 'revisions', 'thumbnail']
 		]);
 	}

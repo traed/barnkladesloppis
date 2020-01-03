@@ -10,6 +10,7 @@
 			add_action('init', array($this, 'handle_post'));
 			add_action('init', array($this, 'load_notices'), 20);
 			add_action('admin_notices', array($this, 'notices_html'));
+			add_action('admin_menu', array($this, 'add_menu_page'));
 		}
 
 
@@ -45,6 +46,11 @@
 			$controller = Helper::get_controller($_POST['controller']);
 			$action = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : null;
 			if(method_exists($controller, 'handle_post')) $controller->handle_post($action);
+		}
+
+
+		public function add_menu_page() {
+			add_submenu_page('edit.php?post_type=bkl_occasion', 'Användare', 'Användare', 'edit_bkl_occasions', 'bkl_users', Helper::callback('Users', 'init'));
 		}
 
 
