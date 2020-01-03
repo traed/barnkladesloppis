@@ -55,9 +55,11 @@
 
 
 		public function load_admin_scripts() {
-			// $screen = get_current_screen();
+			$screen = get_current_screen();
 
-			// Load scripts based on screen->id
+			if(strpos($screen->id, 'bkl_occasion') !== false) {
+				wp_enqueue_script(Plugin::SLUG . '-js', Plugin::get_url() . '/assets/js/admin-script.js', ['jquery'], Plugin::VERSION, true);
+			}
 		}
 	}
 	

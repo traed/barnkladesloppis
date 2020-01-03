@@ -68,6 +68,27 @@ abstract class Plugin {
 			'bkl_seller',
 			'Loppis-säljare'
 		);
+
+		if(!get_option('bkl_locked_numbers')) {
+			add_option('bkl_locked_numbers', [62, 68, 74, 80, 86, 92, 98, 100, 104, 110, 116, 120, 128, 130, 134, 140, 158, 164, 170]);
+		}
+
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+		$tables = [];
+		$charset = 'DEFAULT CHARACTER SET utf8 COLLATE utf8_swedish_ci';
+		
+		$tables[] = '
+			CREATE TABLE IF NOT EXISTS ' . Helper::get_table('occasion_users') . ' (
+				occasion_id int NOT NULL,
+				user_id int NOT NULL,
+				time_created datetime NOT NULL,
+				status varchar(16) NOT NULL,
+				PRIMARY KEY (occasion_id, user_id)
+		) ' . $charset;
+			
+		foreach($tables as $table) {
+			dbDelta($table);
+		}
 	}
 	
 	
@@ -108,7 +129,7 @@ abstract class Plugin {
 			'description' => 'Ett loppistillfälle',
 			'show_ui' => true,
 			'show_in_menu' => true,
-			'show_in_rest' => true,
+			// 'show_in_rest' => true,
 			'exclude_from_search' => true,
 			'map_meta_cap' => true,
 			'capability_type' => 'bkl_occasion',
@@ -118,37 +139,9 @@ abstract class Plugin {
 
 
 	public function add_custom_meta_box() {
-		add_meta_box('bkl_settings', 'Inställningar', array($this, 'occasion_meta_box_callback'), 'bkl_occasion', 'side');
-	}
-
-
-	public function occasion_meta_box_callback() {
-		global $post;
-
-		$date_start = get_post_meta($post->ID, 'date_start', true) ?: '';
-		$date_signup = get_post_meta($post->ID, 'date_signup', true) ?: '';
-		$num_spots = get_post_meta($post->ID, 'num_spots', true) ?: '';
-		$seller_fee = get_post_meta($post->ID, 'seller_fee', true) ?: '';
-
-		wp_nonce_field('bkl_occasion_save', 'bkl_metabox_nonce');
-		?>
-		<div>
-			<label for="date_signup">Anmälan öppnar</label>
-			<input type="date" name="date_signup" value="<?php echo $date_signup; ?>">
-		</div>
-		<div>
-			<div><label for="date_start">Startdatum</label></div>
-			<input type="date" name="date_start" id="date_start" value="<?php echo $date_start; ?>">
-		</div>
-		<div>
-			<div><label for="num_spots">Antal platser</label></div>
-			<input type="number" name="num_spots" id="num_spots" value="<?php echo $num_spots; ?>">
-		</div>
-		<div>
-			<div><label for="seller_fee">Avgift (kr)</label></div>
-			<input type="number" name="seller_fee" id="seller_fee" value="<?php echo $seller_fee; ?>">
-		</div>
-		<?php
+		add_meta_box('bkl_settings', 'Inställningar', Helper::callback('Occasion', 'occasion_settings_callback'), 'bkl_occasion', 'side');
+		add_meta_box('bkl_occasion_users', 'Anmälda användare', Helper::callback('Occasion', 'occasion_users_callback'), 'bkl_occasion');
+		add_meta_box('bkl_occasion_reserves', 'Väntelista', Helper::callback('Occasion', 'occasion_reserve_callback'), 'bkl_occasion');
 	}
 
 

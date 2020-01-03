@@ -56,6 +56,7 @@ class Users_Controller extends Controller {
 
 	private function show_single_user($id) {
 		$user = get_user_by('ID', $id);
+		$can_sign_up = Occasion::get_next() !== false;
 
 		include(Plugin::PATH . '/app/views/admin/single-user.php');
 	}
@@ -67,9 +68,10 @@ class Users_Controller extends Controller {
 			$user = get_user_by_email($original_email);
 
 			if($user) {
-				update_usermeta($user->ID, 'first_name', sanitize_text_field($_POST['first_name']));
-				update_usermeta($user->ID, 'last_name', sanitize_text_field($_POST['last_name']));
-				update_usermeta($user->ID, 'phone', sanitize_text_field($_POST['phone']));
+				update_user_meta($user->ID, 'first_name', sanitize_text_field($_POST['first_name']));
+				update_user_meta($user->ID, 'last_name', sanitize_text_field($_POST['last_name']));
+				update_user_meta($user->ID, 'phone', sanitize_text_field($_POST['phone']));
+				update_user_meta($user->ID, 'seller_number', (int)$_POST['seller_number']);
 
 				$role = sanitize_key($_POST['role']);
 				if($GLOBALS['wp_roles']->is_role($role)) {
@@ -89,6 +91,33 @@ class Users_Controller extends Controller {
 				}
 
 				Admin::notice('Ändringarna har sparats!', 'success');
+			}
+
+			wp_safe_redirect($_POST['_wp_http_referer']);
+			exit;
+		}
+
+		if($action === 'sign_up' && isset($_POST['original_email']) && wp_verify_nonce($_POST['_wpnonce'], 'bkl_edit_user')) {
+			$original_email = sanitize_email($_POST['original_email']);
+			$user = get_user_by_email($original_email);
+			if($occasion = Occasion::get_next()) {
+				$seller_number = (int)$user->get('seller_number');
+				if(empty($seller_number)) {
+					$seller_number = Occasion::get_seller_number();
+					update_user_meta($user->ID, 'seller_number', $seller_number);
+				}
+
+				$status = $occasion->add_user($user->ID);
+
+				if($status === 'signed_up') {
+					Admin::notice('Användaren är anmäld!', 'success');
+				} elseif($status === 'reserve') {
+					Admin::notice('Användaren är satt som reserv.', 'warning');
+				} else {
+					Admin::notice('Ett fel inträffade.', 'error');
+				}
+			} else {
+				Admin::notice('Det finns inga kommande loppisar.', 'error');
 			}
 
 			wp_safe_redirect($_POST['_wp_http_referer']);

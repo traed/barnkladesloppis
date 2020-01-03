@@ -55,12 +55,25 @@ namespace eqhby\bkl; ?>
 						</fieldset>
 					</td>
 				</tr>
+
+				<tr>
+					<th scope="row"><label for="seller_number">Säljar-nummer</label></th>
+					<td>
+						<input type="text" id="seller_number" name="seller_number" value="<?php echo $user->get('seller_number'); ?>" class="small-text" readonly>
+						<button type="button" class="button" id="clear_seller_number">Rensa</button>
+					</td>
+				</tr>
 			</tbody>
 		</table>
 
 		<?php wp_nonce_field('bkl_edit_user'); ?>
 		<input type="hidden" name="original_email" value="<?php echo $user->get('user_email'); ?>">
 		<input type="hidden" name="controller" value="Users">
-		<p class="submit"><button type="submit" class="button button-primary" name="action" value="edit_user">Spara ändringar</button></p>
+		<p class="submit">
+			<button type="submit" class="button button-primary" name="action" value="edit_user">Spara ändringar</button>
+			<?php if($can_sign_up): ?>
+				<button type="submit" class="button" name="action" value="sign_up">Anmäl till loppis</button>
+			<?php endif; ?>
+		</p>
 	</form>
 </div>

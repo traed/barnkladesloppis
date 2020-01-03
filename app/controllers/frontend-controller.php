@@ -30,7 +30,7 @@ class Frontend_Controller extends Controller {
 
 
 	protected function show_logged_in_seller() {
-		$posts = $this->get_occasions();
+		$posts = Occasion::get_future();
 		$title = 'Barnklädesloppis Säljare';
 		$this->set_title($title);
 
@@ -39,26 +39,11 @@ class Frontend_Controller extends Controller {
 
 
 	protected function show_logged_in_no_role() {
-		$posts = $this->get_occasions();
+		$posts = Occasion::get_future();
 		$title = 'Barnklädesloppis Inget konto';
 		$this->set_title($title);
 
 		include(Plugin::PATH . '/app/views/frontend/start.php');
-	}
-
-
-	protected function get_occasions() {
-		$posts = get_posts([
-			'post_type' => 'bkl_occasion',
-			'post_status' => 'publish',
-			'meta_key' => 'date_start',
-			'meta_compare' => '>=',
-			'meta_value' => Helper::date('now')->format('Y-m-d'),
-			'orderby' => 'meta_value',
-			'order' => 'ASC'
-		]);
-
-		return $posts;
 	}
 
 
@@ -80,6 +65,11 @@ class Frontend_Controller extends Controller {
 
 			$user = get_user_by('ID', $user_id);
 			$user->set_role('bkl_seller');
+
+			wp_update_user([
+				'ID' => $user_id,
+				'display_name' => $user->get('first_name') . ' ' . $user->get('last_name')
+			]);
 
 			update_user_meta($user_id, 'first_name', $first_name);
 			update_user_meta($user_id, 'last_name', $last_name);
