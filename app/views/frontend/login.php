@@ -21,7 +21,7 @@
 		// Set 'value_remember' to true to default the "Remember me" checkbox to checked.
 		'value_remember' => true,
 	);
-	$args = wp_parse_args( $args, apply_filters( 'login_form_defaults', $defaults ) );
+	$args = wp_parse_args( [], apply_filters( 'login_form_defaults', $defaults ) );
 ?>
 
 <div class="row bkl-login">
