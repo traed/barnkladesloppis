@@ -39,6 +39,12 @@ namespace eqhby\bkl; ?>
 			</div>
 
 			<div class="col s12 xl4">
+				<p>
+					<?php if(is_user_logged_in()): ?>
+						<a href="/wp-login.php?action=logout" class="waves-effect waves-light btn">Logga ut</a>
+					<?php endif; ?>
+				</p>
+
 				<div class="credentials-header">
 					<h2 class="h3">Mina uppgifter</h2>
 					<button type="button" data-target="editUserModal" class="waves-effect waves-light btn-flat modal-trigger">Ändra</button>
