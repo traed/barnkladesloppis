@@ -99,4 +99,43 @@ class Occasion_Controller extends Controller {
 		</table>
 		<?php
 	}
+
+	
+	public function add_custom_columns($columns) {
+		$columns['num_signed_up'] = 'Anmälda';
+		$columns['num_reserve'] = 'Reserver';
+		$columns['date_start'] = 'Startdatum';
+		$columns['date_signup'] = 'Anmälan öppnar';
+		unset($columns['date']);
+
+		return $columns;
+	}
+
+
+	public function sortable_columns($columns) {
+		$columns['date_start'] = ['date', true];
+		$columns['date_signup'] = ['date', true];
+
+		return $columns;
+	}
+
+	
+	public function custom_column_data($column, $post_id) {
+		$occasion = Occasion::get_by_id($post_id);
+
+		switch($column) {
+			case 'num_signed_up':
+				echo $occasion->count_users('signed_up');
+				break;
+			case 'num_reserve':
+				echo $occasion->count_users('reserve');
+				break;
+			case 'date_start':
+				echo $occasion->get_date_start();
+				break;
+			case 'date_signup':
+				echo $occasion->get_date_signup();
+				break;
+		}
+	}
 }

@@ -11,6 +11,10 @@
 			add_action('init', array($this, 'load_notices'), 20);
 			add_action('admin_notices', array($this, 'notices_html'));
 			add_action('admin_menu', array($this, 'add_menu_page'));
+
+			add_filter('manage_bkl_occasion_posts_columns', Helper::callback('Occasion', 'add_custom_columns'));
+			add_filter('manage_edit-bkl_occasion_sortable_columns', Helper::callback('Occasion', 'sortable_columns'));
+			add_action('manage_bkl_occasion_posts_custom_column' , Helper::callback('Occasion', 'custom_column_data'), 10, 2);
 		}
 
 
