@@ -55,9 +55,12 @@ class Frontend_Controller extends Controller {
 	protected function show_logged_in_seller() {
 		$this->handle_post_sign_up();
 		$this->handle_post_resign();
+		$this->handle_post_edit_user();
 
 		$occasions = Occasion::get_future();
 		$next_occasion = Occasion::get_next();
+		$current_user = wp_get_current_user();
+		$status = $next_occasion->get_user_status($current_user->ID);
 		$title = 'Barnklädesloppis Säljare';
 		$this->set_title($title);
 
@@ -76,7 +79,7 @@ class Frontend_Controller extends Controller {
 
 
 	protected function handle_post_register() {
-		if(isset($_POST['action']) && $_POST['action'] === 'register' && !empty($_POST['_wpnonce']) && wp_verify_nonce($_POST['_wpnonce'], 'bkl_register')) {
+		if(isset($_POST['action']) && $_POST['action'] === 'register' && !empty($_POST['bkl_register_nonce']) && wp_verify_nonce($_POST['bkl_register_nonce'], 'bkl_register')) {
 			$first_name = sanitize_text_field($_POST['first_name']);
 			$last_name = sanitize_text_field($_POST['last_name']);
 			$email = sanitize_email($_POST['email']);
@@ -115,7 +118,7 @@ class Frontend_Controller extends Controller {
 
 
 	protected function handle_post_sign_up() {
-		if(isset($_POST['action']) && $_POST['action'] === 'sign_up' && !empty($_POST['_wpnonce']) && wp_verify_nonce($_POST['_wpnonce'], 'bkl_sign_up')) {
+		if(isset($_POST['action']) && $_POST['action'] === 'sign_up' && !empty($_POST['bkl_sign_up_nonce']) && wp_verify_nonce($_POST['bkl_sign_up_nonce'], 'bkl_sign_up')) {
 			if(is_user_logged_in() && !empty($_POST['occasion_id'])) {
 				$occasion = Occasion::get_by_id((int)$_POST['occasion_id']);
 				$occasion->add_user(get_current_user_id());
@@ -128,10 +131,39 @@ class Frontend_Controller extends Controller {
 
 
 	protected function handle_post_resign() {
-		if(isset($_POST['action']) && $_POST['action'] === 'resign' && !empty($_POST['_wpnonce']) && wp_verify_nonce($_POST['_wpnonce'], 'bkl_resign')) {
+		if(isset($_POST['action']) && $_POST['action'] === 'resign' && !empty($_POST['bkl_resign_nonce']) && wp_verify_nonce($_POST['bkl_resign_nonce'], 'bkl_resign')) {
 			if(is_user_logged_in() && !empty($_POST['occasion_id'])) {
 				$occasion = Occasion::get_by_id((int)$_POST['occasion_id']);
 				$occasion->add_user(get_current_user_id(), 'none');
+			}
+
+			wp_redirect('/loppis');
+			exit;
+		}
+	}
+
+
+	protected function handle_post_edit_user() {
+		if(isset($_POST['action']) && $_POST['action'] === 'edit_user' && !empty($_POST['bkl_edit_user_nonce']) && wp_verify_nonce($_POST['bkl_edit_user_nonce'], 'bkl_edit_user')) {
+			if($user_id = get_current_user_id()) {
+				$first_name = sanitize_text_field($_POST['first_name']);
+				$last_name = sanitize_text_field($_POST['last_name']);
+				$email = sanitize_email($_POST['email']);
+				$phone = sanitize_text_field($_POST['phone']);
+
+				update_user_meta($user_id, 'first_name', $first_name);
+				update_user_meta($user_id, 'last_name', $last_name);
+				update_user_meta($user_id, 'phone', $phone);
+
+				$data = [
+					'ID' => $user_id,
+					'display_name' => $first_name . ' ' . $last_name
+				];
+				if($email) {
+					$data['user_email'] = $email;
+				}
+
+				wp_update_user($data);
 			}
 
 			wp_redirect('/loppis');

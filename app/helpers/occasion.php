@@ -56,6 +56,9 @@ class Occasion {
 	}
 
 
+	/**
+	 * @return Occasion[]
+	 */
 	static public function get_all() {
 		$query = [
 			'post_type' => 'bkl_occasion',
@@ -74,7 +77,9 @@ class Occasion {
 		return $occasions;
 	}
 
-
+	/**
+	 * @return Occasion|false
+	 */
 	static public function get_next() {
 		$occasions = self::get_future(1);
 		if($occasion = reset($occasions)) {
