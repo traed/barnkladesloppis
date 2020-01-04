@@ -104,6 +104,7 @@ class Occasion_Controller extends Controller {
 	public function add_custom_columns($columns) {
 		$columns['num_signed_up'] = 'Anmälda';
 		$columns['num_reserve'] = 'Reserver';
+		$columns['num_spots'] = 'Max antal platser';
 		$columns['date_start'] = 'Startdatum';
 		$columns['date_signup'] = 'Anmälan öppnar';
 		unset($columns['date']);
@@ -129,6 +130,9 @@ class Occasion_Controller extends Controller {
 				break;
 			case 'num_reserve':
 				echo $occasion->count_users('reserve');
+				break;
+			case 'num_spots':
+				echo $occasion->get_num_spots();
 				break;
 			case 'date_start':
 				echo $occasion->get_date_start();
