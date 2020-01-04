@@ -53,6 +53,25 @@ class Occasion {
 	}
 
 
+	static public function get_all() {
+		$query = [
+			'post_type' => 'bkl_occasion',
+			'post_status' => 'publish',
+			'meta_key' => 'date_start',
+			'orderby' => 'meta_value',
+			'order' => 'ASC',
+			'numberposts' => -1
+		];
+
+		$posts = get_posts($query);
+		$occasions = array_map(function($p) {
+			return new self($p);
+		}, $posts);
+
+		return $occasions;
+	}
+
+
 	static public function get_next() {
 		$occasions = self::get_future(1);
 		if($post = reset($occasions)) {
@@ -105,7 +124,7 @@ class Occasion {
 	}
 
 
-	public function get_users($status = false) {
+	public function get_users($status = false, $only_ids = false) {
 		global $wpdb;
 
 		$query = '
@@ -122,8 +141,10 @@ class Occasion {
 		}
 
 		$user_ids = $wpdb->get_col($query);
-		$users = [];
 
+		if($only_ids) return $user_ids;
+		
+		$users = [];
 		if(!empty($user_ids)) {
 			$users = get_users([
 				'include' => $user_ids,
