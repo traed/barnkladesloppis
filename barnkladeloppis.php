@@ -177,7 +177,7 @@ abstract class Plugin {
 
 
 	public function redirect_login($redirect_to, $requested_redirect_to, $user) {
-		if(in_array('bkl_seller', $user->roles)) {
+		if(!is_wp_error($user) && in_array('bkl_seller', $user->roles)) {
 			$redirect_to = '/loppis';
 		}
 

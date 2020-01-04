@@ -204,8 +204,10 @@ class Users_Controller extends Controller {
 				update_user_meta($user->ID, 'seller_number', (int)$_POST['seller_number']);
 
 				$role = sanitize_key($_POST['role']);
-				if($GLOBALS['wp_roles']->is_role($role)) {
-					$user->set_role($role);
+				if(in_array($role, ['bkl_seller', 'bkl_admin']) && !in_array($role, $user->roles)) {
+					$user->remove_role('bkl_admin');
+					$user->remove_role('bkl_seller');
+					$user->add_role($role);
 				}
 
 				$email = sanitize_email($_POST['email']);

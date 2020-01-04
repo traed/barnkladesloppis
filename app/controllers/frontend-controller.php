@@ -24,7 +24,7 @@ class Frontend_Controller extends Controller {
 
 
 	public function register() {
-		$this->handle_post();
+		$this->handle_post_register();
 
 		if(is_user_logged_in()) {
 			wp_redirect('/loppis');
@@ -53,7 +53,11 @@ class Frontend_Controller extends Controller {
 
 
 	protected function show_logged_in_seller() {
-		$posts = Occasion::get_future();
+		$this->handle_post_sign_up();
+		$this->handle_post_resign();
+
+		$occasions = Occasion::get_future();
+		$next_occasion = Occasion::get_next();
 		$title = 'Barnklädesloppis Säljare';
 		$this->set_title($title);
 
@@ -62,7 +66,7 @@ class Frontend_Controller extends Controller {
 
 
 	protected function show_loppis_logged_out() {
-		$posts = Occasion::get_future();
+		$occasions = Occasion::get_future();
 		$next_occasion = Occasion::get_next();
 		$title = 'Barnklädesloppis';
 		$this->set_title($title);
@@ -71,7 +75,7 @@ class Frontend_Controller extends Controller {
 	}
 
 
-	protected function handle_post() {
+	protected function handle_post_register() {
 		if(isset($_POST['action']) && $_POST['action'] === 'register' && !empty($_POST['_wpnonce']) && wp_verify_nonce($_POST['_wpnonce'], 'bkl_register')) {
 			$first_name = sanitize_text_field($_POST['first_name']);
 			$last_name = sanitize_text_field($_POST['last_name']);
@@ -103,6 +107,32 @@ class Frontend_Controller extends Controller {
 				'user_login' => $email,
 				'user_password' => $_POST['password']
 			]);
+
+			wp_redirect('/loppis');
+			exit;
+		}
+	}
+
+
+	protected function handle_post_sign_up() {
+		if(isset($_POST['action']) && $_POST['action'] === 'sign_up' && !empty($_POST['_wpnonce']) && wp_verify_nonce($_POST['_wpnonce'], 'bkl_sign_up')) {
+			if(is_user_logged_in() && !empty($_POST['occasion_id'])) {
+				$occasion = Occasion::get_by_id((int)$_POST['occasion_id']);
+				$occasion->add_user(get_current_user_id());
+			}
+
+			wp_redirect('/loppis');
+			exit;
+		}
+	}
+
+
+	protected function handle_post_resign() {
+		if(isset($_POST['action']) && $_POST['action'] === 'resign' && !empty($_POST['_wpnonce']) && wp_verify_nonce($_POST['_wpnonce'], 'bkl_resign')) {
+			if(is_user_logged_in() && !empty($_POST['occasion_id'])) {
+				$occasion = Occasion::get_by_id((int)$_POST['occasion_id']);
+				$occasion->add_user(get_current_user_id(), 'none');
+			}
 
 			wp_redirect('/loppis');
 			exit;

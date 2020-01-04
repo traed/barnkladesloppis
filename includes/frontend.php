@@ -35,6 +35,7 @@
 
 		public function assets() {
 			wp_enqueue_style(Plugin::SLUG . '-css', Plugin::get_url() . '/assets/css/frontend.css', [], Plugin::VERSION);
+			wp_enqueue_script(Plugin::SLUG . '-js', Plugin::get_url() . '/assets/js/script.js', ['jquery'], Plugin::VERSION, true);
 		}
 
 

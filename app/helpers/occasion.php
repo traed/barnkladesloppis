@@ -48,8 +48,11 @@ class Occasion {
 		];
 
 		$posts = get_posts($query);
+		$occasions = array_map(function($p) {
+			return new self($p);
+		}, $posts);
 
-		return $posts;
+		return $occasions;
 	}
 
 
@@ -74,8 +77,8 @@ class Occasion {
 
 	static public function get_next() {
 		$occasions = self::get_future(1);
-		if($post = reset($occasions)) {
-			return self::get_by_id($post->ID);
+		if($occasion = reset($occasions)) {
+			return $occasion;
 		}
 
 		return false;
