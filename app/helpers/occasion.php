@@ -21,6 +21,10 @@ class Occasion {
 	}
 
 
+	/**
+	 * @param int $limit Limit number of returned objects. -1 equals unlimited.
+	 * @return Occasion[]
+	 */
 	static public function get_future($limit = -1) {
 		$now = Helper::date('now')->format('Y-m-d');
 
@@ -32,12 +36,6 @@ class Occasion {
 				[
 					'key' => 'date_start',
 					'compare' => '>=',
-					'value' => $now,
-					'type' => 'DATE'
-				],
-				[
-					'key' => 'date_signup',
-					'compare' => '<=',
 					'value' => $now,
 					'type' => 'DATE'
 				]
@@ -81,9 +79,34 @@ class Occasion {
 	 * @return Occasion|false
 	 */
 	static public function get_next() {
-		$occasions = self::get_future(1);
-		if($occasion = reset($occasions)) {
-			return $occasion;
+		$now = Helper::date('now')->format('Y-m-d');
+
+		$query = [
+			'post_type' => 'bkl_occasion',
+			'post_status' => 'publish',
+			'meta_query' => [
+				'relation' => 'AND',
+				[
+					'key' => 'date_start',
+					'compare' => '>=',
+					'value' => $now,
+					'type' => 'DATE'
+				],
+				[
+					'key' => 'date_signup',
+					'compare' => '<=',
+					'value' => $now,
+					'type' => 'DATE'
+				]
+			],
+			'orderby' => 'meta_value',
+			'order' => 'ASC',
+			'numberposts' => 1
+		];
+
+		$posts = get_posts($query);
+		if($post = reset($posts)) {
+			return new self($post);
 		}
 
 		return false;
@@ -220,5 +243,13 @@ class Occasion {
 		', $this->get_ID(), $user_id, $created, $created, $status, $created, $status);
 
 		return $wpdb->query($query) !== false ? $status : false;
+	}
+
+
+	public function is_registration_open() {
+		$now = Helper::date('now');
+		$date_signup = Helper::date($this->get_date_signup());
+
+		return $now >= $date_signup;
 	}
 }

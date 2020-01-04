@@ -41,6 +41,9 @@ abstract class Plugin {
 		add_action('save_post', array($this, 'save_meta_fields'));
 		add_action('new_to_publish', array($this, 'save_meta_fields'));
 		add_filter('login_redirect', array($this, 'redirect_login'), 10, 3);
+
+		add_filter('register_url', array($this, 'register_url'));
+		add_action('login_form_register', array($this, 'redirect_register'));
 		
 		$this->init();
 	}
@@ -183,6 +186,17 @@ abstract class Plugin {
 
 		return $redirect_to; 
 	}
+
+
+	public function register_url() {
+        return home_url('/loppis/reg');
+	}
+	
+
+	public function redirect_register() {
+        wp_redirect(wp_registration_url());
+        exit;
+    }
 	
 	
 	protected function init() {

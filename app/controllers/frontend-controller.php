@@ -61,7 +61,7 @@ class Frontend_Controller extends Controller {
 		$next_occasion = Occasion::get_next();
 		$current_user = wp_get_current_user();
 		$status = $next_occasion->get_user_status($current_user->ID);
-		$title = 'Barnklädesloppis Säljare';
+		$title = 'Barnklädesloppis';
 		$this->set_title($title);
 
 		include(Plugin::PATH . '/app/views/frontend/start.php');

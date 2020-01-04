@@ -55,6 +55,7 @@
 
 		public function add_menu_page() {
 			add_submenu_page('edit.php?post_type=bkl_occasion', 'Användare', 'Användare', 'edit_bkl_occasions', 'bkl_users', Helper::callback('Users', 'init'));
+			add_submenu_page('edit.php?post_type=bkl_occasion', 'Inställningar', 'Inställningar', 'edit_bkl_occasions', 'bkl_settings', Helper::callback('Settings', 'init'));
 		}
 
 
@@ -63,6 +64,7 @@
 
 			if(strpos($screen->id, 'bkl_occasion') !== false) {
 				wp_enqueue_script(Plugin::SLUG . '-js', Plugin::get_url() . '/assets/js/admin-script.js', ['jquery'], Plugin::VERSION, true);
+				wp_enqueue_style(Plugin::SLUG . '-css', Plugin::get_url() . '/assets/css/admin.css', [], Plugin::VERSION);
 			}
 		}
 	}

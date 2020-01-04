@@ -43,7 +43,7 @@ class Occasion_Controller extends Controller {
 			<thead>
 				<tr>
 					<th>Namn</th>
-					<th>Nummer</th>
+					<th>Försäljnings-ID</th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
@@ -77,7 +77,7 @@ class Occasion_Controller extends Controller {
 			<thead>
 				<tr>
 					<th>Namn</th>
-					<th>Nummer</th>
+					<th>Försäljnings-ID</th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
