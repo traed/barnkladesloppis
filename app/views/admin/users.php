@@ -5,12 +5,14 @@
 
 	<form method="post">
 		<input type="hidden" name="controller" value="Users">
-		<?php wp_nonce_field('users_table'); ?>
+		<?php wp_nonce_field('bkl_users_bulk_action'); ?>
 
 		<div class="tablenav top">
 			<div class="alignleft actions bulkactions">
 				<select name="bulk_action" id="bulk-action-selector-top">
 					<option value="-1">Massåtgärder</option>
+					<option value="export_all">Exportera alla</option>
+					<option value="export_some">Exportera valda</option>
 					<option value="trash">Radera</option>
 				</select>
 				<button type="submit" name="action" value="bulk" class="button action" onclick="return confirm('Är du säker?');">Verkställ</button>

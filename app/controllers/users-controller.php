@@ -267,7 +267,7 @@ class Users_Controller extends Controller {
 			exit;
 		}
 
-		elseif($action === 'bulk' && wp_verify_nonce($_POST['_wpnonce'], 'users_table')) {
+		elseif($action === 'bulk' && wp_verify_nonce($_POST['_wpnonce'], 'bkl_users_bulk_action')) {
 			if(isset($_POST['bulk_action']) && $_POST['bulk_action'] === 'trash' && !empty($_POST['users'])) {
 				global $wpdb;
 
@@ -276,6 +276,38 @@ class Users_Controller extends Controller {
 					$wpdb->delete(Helper::get_table('occasion_users'), ['user_id' => $user_id]);
 					wp_delete_user($user_id);
 				}
+			}
+
+			elseif(isset($_POST['bulk_action']) && $_POST['bulk_action'] === 'export_all') {
+				$now = Helper::date('now')->format('Y-m-d--H-i-s');
+
+				if(isset($_GET['filter_occasion']) && is_numeric($_GET['filter_occasion'])) {
+					$occasion = Occasion::get_by_id((int)$_GET['filter_occasion']);
+					$users = $occasion->get_users();
+					$filename = 'loppis-' . $occasion->get_post_name() . '-' . $now;
+				} else {
+					$users = get_users([
+						'role__in' => ['bkl_seller', 'bkl_admin'],
+						'orderby' => 'display_name',
+						'order' => 'ASC'
+					]);
+					$filename = 'loppis-alla-' . $now;
+				}
+
+				Spreadsheet::export_users($users, $filename);
+			}
+
+			elseif(isset($_POST['bulk_action']) && $_POST['bulk_action'] === 'export_some' && !empty($_POST['users'])) {
+				$user_ids = array_map('intval', $_POST['users']);
+				$users = get_users([
+					'role__in' => ['bkl_seller', 'bkl_admin'],
+					'include' => $user_ids,
+					'orderby' => 'display_name',
+					'order' => 'ASC'
+				]);
+
+				$now = Helper::date('now')->format('Y-m-d--H-i-s');
+				Spreadsheet::export_users($users, 'loppis-utvalda-' . $now);
 			}
 		}
 	}
