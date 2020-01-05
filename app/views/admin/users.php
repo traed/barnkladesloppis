@@ -1,7 +1,8 @@
 <?php namespace eqhby\bkl; ?>
 
 <div class="wrap">
-	<h1>Användare</h1>
+	<h1 class="wp-heading-inline">Användare</h1>
+	<a href="/wp-admin/edit.php?post_type=bkl_occasion&page=bkl_users&id=new" class="page-title-action">Lägg till ny</a>
 
 	<form method="post">
 		<input type="hidden" name="controller" value="Users">

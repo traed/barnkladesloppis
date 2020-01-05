@@ -12,13 +12,6 @@ namespace eqhby\bkl; ?>
 	
 			<tbody>
 				<tr>
-					<th scope="row"><label for="username">Användarnamn</label></th>
-					<td>
-						<input type="text" id="username" class="regular-text" value="<?php echo $user->get('user_login'); ?>" readonly>
-					</td>
-				</tr>
-
-				<tr>
 					<th scope="row"><label for="first_name">Förnamn</label></th>
 					<td><input name="first_name" type="text" id="first_name" value="<?php echo $user->get('first_name'); ?>" class="regular-text"></td>
 				</tr>

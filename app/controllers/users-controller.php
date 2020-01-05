@@ -5,8 +5,12 @@ namespace eqhby\bkl;
 class Users_Controller extends Controller {
 
 	public function init() {
-		if(isset($_GET['id']) && is_numeric($_GET['id'])) {
-			$this->show_single_user((int)$_GET['id']);
+		if(isset($_GET['id'])) {
+			if(is_numeric($_GET['id'])) {
+				$this->show_single_user((int)$_GET['id']);
+			} else {
+				$this->show_new_user();
+			}
 		} else {
 			$this->show_all_users();
 		}
@@ -68,12 +72,29 @@ class Users_Controller extends Controller {
 
 
 	private function show_single_user($id) {
-		$user = get_user_by('ID', $id);
 		$occasion = Occasion::get_next();
 		$can_sign_up = $occasion !== false;
-		$status = $occasion->get_user_status($user->ID, true);
+		$user = get_user_by('ID', $id);
+		if($user) {
+			if(!in_array('bkl_seller', $user->roles) && !in_array('bkl_admin', $user->roles)) {
+				Admin::notice('Du har inte behörighet att redigera den användaren', 'error');
+				wp_redirect('/wp-admin/edit.php?post_type=bkl_occasion&page=bkl_users');
+				exit;
+			}
+
+			$status = $occasion->get_user_status($user->ID, true);
+		} else {
+			Admin::notice('Felaktigt användar-ID.', 'error');
+			wp_redirect('/wp-admin/edit.php?post_type=bkl_occasion&page=bkl_users');
+			exit;
+		}
 
 		include(Plugin::PATH . '/app/views/admin/single-user.php');
+	}
+
+
+	private function show_new_user() {
+		include(Plugin::PATH . '/app/views/admin/new-user.php');
 	}
 
 
@@ -250,6 +271,36 @@ class Users_Controller extends Controller {
 			}
 
 			wp_safe_redirect($_POST['_wp_http_referer']);
+			exit;
+		}
+
+		elseif($action === 'new_user' && wp_verify_nonce($_POST['_wpnonce'], 'bkl_new_user')) {
+			$first_name = sanitize_text_field($_POST['first_name']);
+			$last_name = sanitize_text_field($_POST['last_name']);
+			$email = sanitize_email($_POST['email']);
+			$phone = sanitize_text_field($_POST['phone']);
+			$role = $_POST['role'] === 'bkl_admin' ? 'bkl_admin' : 'bkl_seller';
+			$password = wp_generate_password();
+
+			$user_id = wp_create_user($email, $password, $email);
+			if(is_wp_error($user_id)) {
+				throw new Problem('Invalid input.');
+			}
+
+			$user = get_user_by('ID', $user_id);
+			$user->set_role($role);
+
+			wp_update_user([
+				'ID' => $user_id,
+				'display_name' => $first_name . ' ' . $last_name
+			]);
+
+			update_user_meta($user_id, 'first_name', $first_name);
+			update_user_meta($user_id, 'last_name', $last_name);
+			update_user_meta($user_id, 'phone', $phone);
+
+			Admin::notice('Användare skapad!', 'success');
+			wp_redirect('/wp-admin/edit.php?post_type=bkl_occasion&page=bkl_users&id=' . $user_id);
 			exit;
 		}
 
