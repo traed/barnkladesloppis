@@ -8,28 +8,6 @@ namespace eqhby\bkl; ?>
 			<div class="col s12 xl8">
 				<h1><?php echo $title; ?></h1>
 
-				<?php if(!is_user_logged_in()): ?>
-					<div class="bkl-cta-wrapper">
-						<a href="/loppis/login">
-							<div class="bkl-cta login">
-								<div class="icon">
-									<?php echo file_get_contents(Plugin::PATH . '/assets/img/unlock.svg'); ?>
-								</div>
-								<p>Logga in</p>
-							</div>
-						</a>
-
-						<a href="/loppis/reg">
-							<div class="bkl-cta register">
-								<div class="icon">
-									<?php echo file_get_contents(Plugin::PATH . '/assets/img/pen.svg'); ?>
-								</div>
-								<p>Skapa konto</p>
-							</div>
-						</a>
-					</div>
-				<?php endif; ?>
-
 				<?php 
 				if($next_occasion) {
 					echo apply_filters('the_content', $next_occasion->get_post_content());
@@ -57,6 +35,26 @@ namespace eqhby\bkl; ?>
 						<dt>Försäljnings-ID</dt>
 						<dd><?php echo $current_user->get('seller_id') ?: '-'; ?></dd>
 					</dl>
+				<?php else: ?>
+					<div class="bkl-cta-wrapper row">
+						<a href="/loppis/login" class="col xl12 l6 s12">
+							<div class="bkl-cta login">
+								<div class="icon">
+									<?php echo file_get_contents(Plugin::PATH . '/assets/img/unlock.svg'); ?>
+								</div>
+								<p class="h4">Logga in</p>
+							</div>
+						</a>
+
+						<a href="/loppis/reg" class="col xl12 l6 s12">
+							<div class="bkl-cta register">
+								<div class="icon">
+									<?php echo file_get_contents(Plugin::PATH . '/assets/img/pen.svg'); ?>
+								</div>
+								<p class="h4">Skapa konto</p>
+							</div>
+						</a>
+					</div>
 				<?php endif; ?>
 
 				<h2 class="h3">Kommande loppisar</h2>

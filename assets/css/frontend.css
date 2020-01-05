@@ -1,23 +1,11 @@
-.bkl-cta-wrapper {
-	display: flex;
-	flex-flow: row nowrap;
-	margin-left: -20px;
-	margin-right: -20px;
-}
-
-.bkl-cta-wrapper > * {
-	flex: 1;
-	padding-right: 20px;
-	padding-left: 20px;
-}
-
 .bkl-cta {
 	display: flex;
 	flex-flow: row nowrap;
 	align-items: center;
-	border: 1px solid #f1f1f1;
+	border: 1px solid #ccc;
 	border-radius: 4px;
 	padding: 20px;
+	margin-bottom: 10px;
 }
 
 .bkl-cta:hover {
@@ -37,4 +25,5 @@
 
 .bkl-cta p {
 	flex: 1;
+	margin: 0;
 }
