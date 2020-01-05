@@ -1,3 +1,4 @@
-.bkl_occasion_page_bkl_settings .wp-editor-wrap {
+.bkl_occasion_page_bkl_settings .wp-editor-wrap,
+.bkl_occasion_page_bkl_email .wp-editor-wrap {
 	max-width: 1200px;
 }

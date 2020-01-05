@@ -6,6 +6,9 @@
 	<?php echo apply_filters('the_content', get_option('bkl_registration_terms', '')); ?>
 
 	<h2>Registrera</h2>
+	<?php if($error = Session::get_once('registration_error')): ?>
+		<p><?php echo $error; ?></p>
+	<?php endif; ?>
 	<div class="bkl-login_form-wrapper">
 		<form name="bkl_register" id="bkl_register" method="post">
 			<div class="row">
@@ -45,7 +48,7 @@
 
 			<div class="row">
 				<div class="login-submit col s12 right-align">
-					<input type="hidden" name="controller" value="Frontend">
+					<input type="hidden" id="recaptcha_token" name="recaptcha_token" value="">
 					<?php wp_nonce_field('bkl_register'); ?>
 					<button type="submit" name="action" class="waves-effect waves-light btn" value="register">Registrera</button>
 				</div>

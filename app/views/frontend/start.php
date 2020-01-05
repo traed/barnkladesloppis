@@ -55,7 +55,7 @@ namespace eqhby\bkl; ?>
 						<dt>Telefonnummer</dt>
 						<dd><?php echo $current_user->get('phone'); ?></dd>
 						<dt>Försäljnings-ID</dt>
-						<dd><?php echo $current_user->get('seller_number'); ?></dd>
+						<dd><?php echo $current_user->get('seller_id') ?: '-'; ?></dd>
 					</dl>
 				<?php endif; ?>
 

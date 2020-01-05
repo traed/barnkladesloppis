@@ -22,7 +22,7 @@ class Users_Controller extends Controller {
 		if(isset($_GET['orderby'])) {
 			$orderby = sanitize_key($_GET['orderby']);
 
-			if(in_array($orderby, ['first_name', 'last_name', 'seller_number'])) {
+			if(in_array($orderby, ['first_name', 'last_name', 'seller_id'])) {
 				$meta_key = $orderby;
 				$orderby = 'meta_value';
 			}
@@ -198,10 +198,13 @@ class Users_Controller extends Controller {
 			$user = get_user_by_email($original_email);
 
 			if($user) {
-				update_user_meta($user->ID, 'first_name', sanitize_text_field($_POST['first_name']));
-				update_user_meta($user->ID, 'last_name', sanitize_text_field($_POST['last_name']));
+				$first_name = sanitize_text_field($_POST['first_name']);
+				$last_name = sanitize_text_field($_POST['last_name']);
+
+				update_user_meta($user->ID, 'first_name', $first_name);
+				update_user_meta($user->ID, 'last_name', $last_name);
 				update_user_meta($user->ID, 'phone', sanitize_text_field($_POST['phone']));
-				update_user_meta($user->ID, 'seller_number', (int)$_POST['seller_number']);
+				update_user_meta($user->ID, 'seller_id', (int)$_POST['seller_id']);
 
 				$role = sanitize_key($_POST['role']);
 				if(in_array($role, ['bkl_seller', 'bkl_admin']) && !in_array($role, $user->roles)) {
@@ -210,17 +213,21 @@ class Users_Controller extends Controller {
 					$user->add_role($role);
 				}
 
+				$user_data = [
+					'ID' => $user->ID,
+					'display_name' => $first_name . ' ' . $last_name
+				];
+
 				$email = sanitize_email($_POST['email']);
 				if($email !== $original_email) {
 					if(email_exists($email)) {
 						Admin::notice('E-postadressen finns redan i systemet. Prova med en annan.', 'warning');
 					} else {
-						wp_update_user([
-							'ID' => $user->ID,
-							'user_email' => $email
-						]);
+						$user_data['user_email'] = $email;
 					}
 				}
+
+				wp_update_user($user_data);
 
 				Admin::notice('Ändringarna har sparats!', 'success');
 

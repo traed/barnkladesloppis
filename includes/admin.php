@@ -55,6 +55,7 @@
 
 		public function add_menu_page() {
 			add_submenu_page('edit.php?post_type=bkl_occasion', 'Användare', 'Användare', 'edit_bkl_occasions', 'bkl_users', Helper::callback('Users', 'init'));
+			add_submenu_page('edit.php?post_type=bkl_occasion', 'E-postutskick', 'E-postutskick', 'edit_bkl_occasions', 'bkl_email', Helper::callback('Email', 'init'));
 			add_submenu_page('edit.php?post_type=bkl_occasion', 'Inställningar', 'Inställningar', 'edit_bkl_occasions', 'bkl_settings', Helper::callback('Settings', 'init'));
 		}
 

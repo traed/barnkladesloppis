@@ -113,14 +113,14 @@ class Occasion {
 	}
 
 
-	static public function get_seller_number() {
+	static public function get_seller_id() {
 		global $wpdb;
 		
 		$locked = get_option('bkl_locked_numbers', []);
 		$in_use = $wpdb->get_col("
 			SELECT meta_value
 			FROM $wpdb->usermeta
-			WHERE meta_key = 'seller_number'
+			WHERE meta_key = 'seller_id'
 		");
 		$in_use = array_filter($in_use, 'intval');
 
@@ -228,10 +228,10 @@ class Occasion {
 			$status = $this->count_users('signed_up') < $this->get_num_spots() ? 'signed_up' : 'reserve';
 		}
 
-		$seller_number = (int)get_user_meta($user_id, 'seller_number', true);
-		if(empty($seller_number)) {
-			$seller_number = self::get_seller_number();
-			update_user_meta($user_id, 'seller_number', $seller_number);
+		$seller_id = (int)get_user_meta($user_id, 'seller_id', true);
+		if(empty($seller_id)) {
+			$seller_id = self::get_seller_id();
+			update_user_meta($user_id, 'seller_id', $seller_id);
 		}
 
 		$created = Helper::date('now')->format('Y-m-d H:i:s');

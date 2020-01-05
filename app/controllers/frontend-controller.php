@@ -7,7 +7,7 @@ class Frontend_Controller extends Controller {
 		parent::__construct();
 
 		$this->add_body_class('bkl');
-
+		
 		do_action('bkl_frontend');
 	}
 
@@ -24,6 +24,30 @@ class Frontend_Controller extends Controller {
 
 
 	public function register() {
+		add_action('wp_footer', function() {
+			if($key = get_option('bkl_recaptcha_site_key')) {
+				echo '
+					<script src="https://www.google.com/recaptcha/api.js?render=' . $key . '"></script>
+					<script>
+					(function() {
+						function getToken() {
+							grecaptcha.execute("' . $key . '", {action: "register"}).then(function(token) {
+								var token_field = document.getElementById("recaptcha_token");
+								token_field.value = token;
+							});
+						}
+
+						grecaptcha.ready(function() {
+							getToken();
+						});
+
+						setInterval(getToken, 90000);
+					})();
+					</script>
+				';
+			}
+		});
+
 		$this->handle_post_register();
 
 		if(is_user_logged_in()) {
@@ -79,7 +103,21 @@ class Frontend_Controller extends Controller {
 
 
 	protected function handle_post_register() {
-		if(isset($_POST['action']) && $_POST['action'] === 'register' && !empty($_POST['bkl_register_nonce']) && wp_verify_nonce($_POST['bkl_register_nonce'], 'bkl_register')) {
+		if(isset($_POST['action']) && $_POST['action'] === 'register' && !empty($_POST['_wpnonce']) && wp_verify_nonce($_POST['_wpnonce'], 'bkl_register')) {
+			$recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify';
+			$recaptcha_secret = get_option('bkl_recaptcha_secret');
+			$recaptcha_response = $_POST['recaptcha_token'];
+		
+			// Make and decode POST request:
+			$recaptcha = file_get_contents($recaptcha_url . '?secret=' . $recaptcha_secret . '&response=' . $recaptcha_response);
+			$recaptcha = json_decode($recaptcha);
+
+			if(!$recaptcha || $recaptcha->success !== true) {
+				Session::set('registration_error', 'recaptcha_failed');
+				wp_redirect('/loppis/reg');
+				exit;
+			}
+
 			$first_name = sanitize_text_field($_POST['first_name']);
 			$last_name = sanitize_text_field($_POST['last_name']);
 			$email = sanitize_email($_POST['email']);
@@ -99,7 +137,7 @@ class Frontend_Controller extends Controller {
 
 			wp_update_user([
 				'ID' => $user_id,
-				'display_name' => $user->get('first_name') . ' ' . $user->get('last_name')
+				'display_name' => $first_name . ' ' . $last_name
 			]);
 
 			update_user_meta($user_id, 'first_name', $first_name);

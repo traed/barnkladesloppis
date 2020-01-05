@@ -56,7 +56,7 @@ class Occasion_Controller extends Controller {
 					<?php foreach($users as $user): ?>
 						<tr>
 							<td><?php echo $user->get('display_name'); ?></td>
-							<td><?php echo $user->get('seller_number'); ?></td>
+							<td><?php echo $user->get('seller_id'); ?></td>
 							<td><a href="/wp-admin/edit.php?post_type=bkl_occasion&page=bkl_users&id=<?php echo $user->ID; ?>">Visa</a></td>
 						</tr>
 					<?php endforeach; ?>
@@ -90,7 +90,7 @@ class Occasion_Controller extends Controller {
 					<?php foreach($users as $user): ?>
 						<tr>
 							<td><?php echo $user->get('display_name'); ?></td>
-							<td><?php echo $user->get('seller_number'); ?></td>
+							<td><?php echo $user->get('seller_id'); ?></td>
 							<td><a href="/wp-admin/edit.php?post_type=bkl_occasion&page=bkl_users&id=<?php echo $user->ID; ?>">Visa</a></td>
 						</tr>
 					<?php endforeach; ?>
