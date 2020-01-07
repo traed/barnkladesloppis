@@ -319,17 +319,7 @@ class Users_Controller extends Controller {
 		}
 
 		elseif($action === 'bulk' && wp_verify_nonce($_POST['_wpnonce'], 'bkl_users_bulk_action')) {
-			if(isset($_POST['bulk_action']) && $_POST['bulk_action'] === 'trash' && !empty($_POST['users'])) {
-				global $wpdb;
-
-				$user_ids = array_map('intval', $_POST['users']);
-				foreach($user_ids as $user_id) {
-					$wpdb->delete(Helper::get_table('occasion_users'), ['user_id' => $user_id]);
-					wp_delete_user($user_id);
-				}
-			}
-
-			elseif(isset($_POST['bulk_action']) && $_POST['bulk_action'] === 'export_all') {
+			if(isset($_POST['bulk_action']) && $_POST['bulk_action'] === 'export_all') {
 				$now = Helper::date('now')->format('Y-m-d--H-i-s');
 
 				if(isset($_GET['filter_occasion']) && is_numeric($_GET['filter_occasion'])) {

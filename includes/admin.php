@@ -15,6 +15,8 @@
 			add_filter('manage_bkl_occasion_posts_columns', Helper::callback('Occasion', 'add_custom_columns'));
 			add_filter('manage_edit-bkl_occasion_sortable_columns', Helper::callback('Occasion', 'sortable_columns'));
 			add_action('manage_bkl_occasion_posts_custom_column' , Helper::callback('Occasion', 'custom_column_data'), 10, 2);
+
+			add_action('delete_user', array($this, 'cleanup_occasion_users'));
 		}
 
 
@@ -67,6 +69,13 @@
 				wp_enqueue_script(Plugin::SLUG . '-js', Plugin::get_url() . '/assets/js/admin-script.js', ['jquery'], Plugin::VERSION, true);
 				wp_enqueue_style(Plugin::SLUG . '-css', Plugin::get_url() . '/assets/css/admin.css', [], Plugin::VERSION);
 			}
+		}
+
+
+		public function cleanup_occasion_users($user_id) {
+			global $wpdb;
+
+			$wpdb->delete(Helper::get_table('occasion_users'), ['user_id' => $user_id]);
 		}
 	}
 	

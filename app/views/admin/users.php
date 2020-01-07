@@ -14,9 +14,8 @@
 					<option value="-1">Massåtgärder</option>
 					<option value="export_all">Exportera alla</option>
 					<option value="export_some">Exportera valda</option>
-					<option value="trash">Radera</option>
 				</select>
-				<button type="submit" name="action" value="bulk" class="button action" onclick="return confirm('Är du säker?');">Verkställ</button>
+				<button type="submit" name="action" value="bulk" class="button action">Verkställ</button>
 			</div>
 
 			<div class="alignleft actions">
