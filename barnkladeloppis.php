@@ -27,6 +27,7 @@ abstract class Plugin {
 	public function __construct() {
 		// Create/update database tables on activation
 		register_activation_hook(self::FILE, array($this, 'install'));
+		register_deactivation_hook(self::FILE, array($this, 'uninstall'));
 		
 		// Autoload all classes
 		spl_autoload_register(array($this, 'autoloader'));
@@ -66,6 +67,18 @@ abstract class Plugin {
 				'delete_others_bkl_occasions' => true,
 				'edit_private_bkl_occasions' => true,
 				'edit_published_bkl_occasions' => true,
+
+				'read_pages' => true,
+				'edit_pages' => true,
+				'edit_others_pages' => true,
+				'publish_pages' => true,
+				'read_private_pages' => false,
+				'delete_pages' => false,
+				'delete_private_pages' => false,
+				'delete_published_pages' => false,
+				'delete_others_pages' => false,
+				'edit_private_pages' => false,
+				'edit_published_pages' => true,
 			]
 		);
 		add_role(
@@ -94,6 +107,14 @@ abstract class Plugin {
 		foreach($tables as $table) {
 			dbDelta($table);
 		}
+	}
+
+
+	public function uninstall() {
+		remove_role('bkl_admin');
+		remove_role('bkl_seller');
+
+		delete_option('bkl_locked_numbers');
 	}
 	
 	
@@ -134,7 +155,7 @@ abstract class Plugin {
 			'description' => 'Ett loppistillfälle',
 			'show_ui' => true,
 			'show_in_menu' => true,
-			// 'show_in_rest' => true,
+			'show_in_rest' => true,
 			'exclude_from_search' => true,
 			'map_meta_cap' => true,
 			'capability_type' => 'bkl_occasion',

@@ -15,6 +15,7 @@
 			add_filter('manage_bkl_occasion_posts_columns', Helper::callback('Occasion', 'add_custom_columns'));
 			add_filter('manage_edit-bkl_occasion_sortable_columns', Helper::callback('Occasion', 'sortable_columns'));
 			add_action('manage_bkl_occasion_posts_custom_column' , Helper::callback('Occasion', 'custom_column_data'), 10, 2);
+			add_action('pre_get_posts', array($this, 'edit_only_bkl_pages'));
 
 			add_action('delete_user', array($this, 'cleanup_occasion_users'));
 		}
@@ -76,6 +77,36 @@
 			global $wpdb;
 
 			$wpdb->delete(Helper::get_table('occasion_users'), ['user_id' => $user_id]);
+		}
+
+
+		public function edit_only_bkl_pages($query) {
+			static $allowed;
+
+			if(!isset($allowed) && is_admin() && !current_user_can('administrator') && current_user_can('bkl_admin')) {
+				$screen = get_current_screen();
+				$allowed = 0;
+
+				if($screen->id === 'page') {
+					global $post_id;
+					$allowed = (int)get_post_meta($post_id, 'allow_bkl_admin', true);
+					if(!$allowed) {
+						wp_redirect(get_admin_url());
+						exit;
+					}
+				}
+
+				if($screen->id === 'edit-page') {
+					$meta_query = $query->get('meta_query') ?: [];
+					$meta_query[] = [
+						'key' => 'allow_bkl_admin',
+						'value' => 1,
+						'compare' => '='
+					];
+					$query->set('meta_query', $meta_query);
+					$allowed = 1;
+				}
+			}
 		}
 	}
 	
