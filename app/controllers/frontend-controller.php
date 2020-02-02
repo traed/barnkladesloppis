@@ -74,7 +74,9 @@ class Frontend_Controller extends Controller {
 
 
 	protected function show_logged_in_seller() {
-		$this->handle_post_sign_up();
+		if(get_option('bkl_enable_sign_up', false)) {
+			$this->handle_post_sign_up();
+		}
 		$this->handle_post_resign();
 		$this->handle_post_edit_user();
 

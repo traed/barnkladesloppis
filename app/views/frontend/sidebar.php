@@ -30,14 +30,16 @@
 			</div>
 		</a>
 
-		<a href="/loppis/reg" class="col xl12 l6 s12">
-			<div class="bkl-cta register">
-				<div class="icon">
-					<?php echo file_get_contents(Plugin::PATH . '/assets/img/pen.svg'); ?>
+		<?php if(get_option('bkl_enable_sign_up', false)): ?>
+			<a href="/loppis/reg" class="col xl12 l6 s12">
+				<div class="bkl-cta register">
+					<div class="icon">
+						<?php echo file_get_contents(Plugin::PATH . '/assets/img/pen.svg'); ?>
+					</div>
+					<p class="h4">Skapa konto</p>
 				</div>
-				<p class="h4">Skapa konto</p>
-			</div>
-		</a>
+			</a>
+		<?php endif; ?>
 	</div>
 <?php endif; ?>
 

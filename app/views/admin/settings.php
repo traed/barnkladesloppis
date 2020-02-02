@@ -57,6 +57,19 @@
 			</tbody>
 		</table>
 
+		<h2>Anmälan</h2>
+		<table class="form-table" role="presentation">
+			<tbody>
+				<tr>
+					<th scope="row"><label for="enable_sign_up">Öppna för nya konton</label></th>
+					<td>
+						<input type="hidden" name="enable_sign_up" value="0">
+						<input type="checkbox" name="enable_sign_up" id="enable_sign_up" value="1"<?php echo get_option('bkl_enable_sign_up', false) ? ' checked' : ''; ?>>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
 		<p class="submit">
 			<?php wp_nonce_field('bkl_settings'); ?>
 			<input type="hidden" name="controller" value="Settings">
