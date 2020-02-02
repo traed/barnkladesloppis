@@ -38,6 +38,7 @@ abstract class Plugin {
 		}
 
 		add_action('init', array($this, 'add_custom_post_type'));
+		add_action('init', array($this, 'add_custom_shortcode'));
 		add_action('add_meta_boxes', array($this, 'add_custom_meta_box'));
 		add_action('save_post', array($this, 'save_meta_fields'));
 		add_action('new_to_publish', array($this, 'save_meta_fields'));
@@ -155,11 +156,11 @@ abstract class Plugin {
 			'description' => 'Ett loppistillfälle',
 			'show_ui' => true,
 			'show_in_menu' => true,
-			'show_in_rest' => true,
+			// 'show_in_rest' => true,
 			'exclude_from_search' => true,
 			'map_meta_cap' => true,
 			'capability_type' => 'bkl_occasion',
-			'supports' => ['title', 'editor', 'revisions', 'thumbnail']
+			'supports' => ['title']
 		]);
 	}
 
@@ -198,6 +199,11 @@ abstract class Plugin {
 		} else {
 			update_post_meta($post_id, 'allow_bkl_admin', (int)$_POST['allow_bkl_admin']);
 		}
+	}
+
+
+	public function add_custom_shortcode() {
+		add_shortcode('barnkladesloppis', Helper::callback('Frontend', 'shortcode'));
 	}
 
 

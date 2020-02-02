@@ -6,13 +6,7 @@ namespace eqhby\bkl; ?>
 	<main id="main" class="site-main">
 		<div class="row">
 			<div class="col s12 xl8">
-				<h1><?php echo $title; ?></h1>
-
-				<?php 
-				if($next_occasion) {
-					echo apply_filters('the_content', $next_occasion->get_post_content());
-				}
-				?>
+				<?php echo $content; ?>
 			</div>
 
 			<div class="col s12 xl4 sidebar">

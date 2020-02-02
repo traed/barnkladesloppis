@@ -12,6 +12,13 @@ class Frontend_Controller extends Controller {
 	}
 
 
+	public function shortcode($atts, $content) {
+		ob_start();
+		$this->init($content);
+		return ob_get_clean();
+	}
+
+
 	public function login() {
 		if(is_user_logged_in()) {
 			wp_redirect('/loppis');
@@ -59,24 +66,21 @@ class Frontend_Controller extends Controller {
 	}
 
 
-	public function init() {
+	public function init($content = '') {
 		$user = is_user_logged_in() ? wp_get_current_user() : false;
 
 		if(!$user) {
-			$this->show_loppis_logged_out();
-		} elseif(in_array('bkl_seller', $user->roles)) {
-			$this->show_logged_in_seller();
-		} elseif(in_array('bkl_admin', $user->roles)) {
-			wp_redirect('/wp-admin');
-			exit;
+			$this->show_loppis_logged_out($content);
 		} else {
-			$user->add_role('bkl_seller');
-			$this->show_logged_in_seller();
+			if(!in_array('bkl_seller', $user->roles) && !in_array('bkl_admin', $user->roles)) {
+				$user->add_role('bkl_seller');
+			}
+			$this->show_logged_in_seller($content);
 		}
 	}
 
 
-	protected function show_logged_in_seller() {
+	protected function show_logged_in_seller($content) {
 		$this->handle_post_sign_up();
 		$this->handle_post_resign();
 		$this->handle_post_edit_user();
@@ -85,18 +89,20 @@ class Frontend_Controller extends Controller {
 		$next_occasion = Occasion::get_next();
 		$current_user = wp_get_current_user();
 		$status = $next_occasion->get_user_status($current_user->ID);
-		$title = 'Barnklädesloppis';
-		$this->set_title($title);
+		if(!$content && $next_occasion) {
+			$content = apply_filters('the_content', $next_occasion->get_post_content());
+		}
 
 		include(Plugin::PATH . '/app/views/frontend/start.php');
 	}
 
 
-	protected function show_loppis_logged_out() {
+	protected function show_loppis_logged_out($content) {
 		$occasions = Occasion::get_future();
 		$next_occasion = Occasion::get_next();
-		$title = 'Barnklädesloppis';
-		$this->set_title($title);
+		if(!$content && $next_occasion) {
+			$content = apply_filters('the_content', $next_occasion->get_post_content());
+		}
 
 		include(Plugin::PATH . '/app/views/frontend/start.php');
 	}
