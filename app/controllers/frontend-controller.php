@@ -12,13 +12,6 @@ class Frontend_Controller extends Controller {
 	}
 
 
-	public function shortcode($atts, $content) {
-		ob_start();
-		$this->init($content);
-		return ob_get_clean();
-	}
-
-
 	public function login() {
 		if(is_user_logged_in()) {
 			wp_redirect('/loppis');
@@ -66,43 +59,38 @@ class Frontend_Controller extends Controller {
 	}
 
 
-	public function init($content = '') {
+	public function init() {
 		$user = is_user_logged_in() ? wp_get_current_user() : false;
 
-		if(!$user) {
-			$this->show_loppis_logged_out($content);
-		} else {
+		if($user) {
 			if(!in_array('bkl_seller', $user->roles) && !in_array('bkl_admin', $user->roles)) {
 				$user->add_role('bkl_seller');
 			}
-			$this->show_logged_in_seller($content);
+			$this->show_logged_in_seller();
+		} else {
+			$this->show_loppis_logged_out();
 		}
 	}
 
 
-	protected function show_logged_in_seller($content) {
+	protected function show_logged_in_seller() {
 		$this->handle_post_sign_up();
 		$this->handle_post_resign();
 		$this->handle_post_edit_user();
 
 		$occasions = Occasion::get_future();
-		$next_occasion = Occasion::get_next();
 		$current_user = wp_get_current_user();
-		$status = $next_occasion->get_user_status($current_user->ID);
-		if(!$content && $next_occasion) {
-			$content = apply_filters('the_content', $next_occasion->get_post_content());
+		$status = 'none';
+		if($next_occasion = Occasion::get_next()) {
+			$status = $next_occasion->get_user_status($current_user->ID);
 		}
 
 		include(Plugin::PATH . '/app/views/frontend/start.php');
 	}
 
 
-	protected function show_loppis_logged_out($content) {
+	protected function show_loppis_logged_out() {
 		$occasions = Occasion::get_future();
-		$next_occasion = Occasion::get_next();
-		if(!$content && $next_occasion) {
-			$content = apply_filters('the_content', $next_occasion->get_post_content());
-		}
 
 		include(Plugin::PATH . '/app/views/frontend/start.php');
 	}

@@ -17,6 +17,8 @@ abstract class Plugin {
 	const PATH = __DIR__;
 	const EMAIL_ADDRESS = '';
 	const MAIN_LANG = 'en';
+
+	protected $templates;
 	
 	
 	static public function get_url() {
@@ -38,7 +40,6 @@ abstract class Plugin {
 		}
 
 		add_action('init', array($this, 'add_custom_post_type'));
-		add_action('init', array($this, 'add_custom_shortcode'));
 		add_action('add_meta_boxes', array($this, 'add_custom_meta_box'));
 		add_action('save_post', array($this, 'save_meta_fields'));
 		add_action('new_to_publish', array($this, 'save_meta_fields'));
@@ -46,6 +47,16 @@ abstract class Plugin {
 
 		add_filter('register_url', array($this, 'register_url'));
 		add_action('login_form_register', array($this, 'redirect_register'));
+
+		// Add custom page template
+		add_filter('theme_page_templates', array($this, 'add_new_template'));
+		add_filter('wp_insert_post_data', array($this, 'register_project_templates'));
+		add_filter('template_include', array($this, 'view_project_template'));
+
+		// Add your templates to this array.
+		$this->templates = array(
+			'app/views/frontend/bkl-page-template.php' => 'Loppis-sida'
+		);
 		
 		$this->init();
 	}
@@ -169,8 +180,6 @@ abstract class Plugin {
 		add_meta_box('bkl_settings', 'Inställningar', Helper::callback('Occasion', 'occasion_settings_callback'), 'bkl_occasion', 'side');
 		add_meta_box('bkl_occasion_users', 'Anmälda användare', Helper::callback('Occasion', 'occasion_users_callback'), 'bkl_occasion');
 		add_meta_box('bkl_occasion_reserves', 'Väntelista', Helper::callback('Occasion', 'occasion_reserve_callback'), 'bkl_occasion');
-
-		add_meta_box('allow_bkl_admin', 'Barnklädesloppis', Helper::callback('Page', 'allow_admin_callback'), 'page', 'side', 'low');
 	}
 
 
@@ -194,16 +203,59 @@ abstract class Plugin {
 		update_post_meta($post_id, 'date_signup', $date_signup);
 		update_post_meta($post_id, 'num_spots', (int)$_POST['num_spots']);
 		update_post_meta($post_id, 'seller_fee', (int)$_POST['seller_fee']);
-		if(empty($_POST['allow_bkl_admin'])) {
-			delete_post_meta($post_id, 'allow_bkl_admin');
-		} else {
-			update_post_meta($post_id, 'allow_bkl_admin', (int)$_POST['allow_bkl_admin']);
-		}
 	}
 
 
-	public function add_custom_shortcode() {
-		add_shortcode('barnkladesloppis', Helper::callback('Frontend', 'shortcode'));
+	public function add_new_template($posts_templates) {
+		return array_merge($posts_templates, $this->templates);
+	}
+
+
+	public function register_project_templates( $atts ) {
+		// Create the key used for the themes cache
+		$cache_key = 'page_templates-' . md5(get_theme_root() . '/' . get_stylesheet());
+
+		// Retrieve the cache list. 
+		// If it doesn't exist, or it's empty prepare an array
+		$templates = wp_get_theme()->get_page_templates();
+		if(empty($templates)) {
+			$templates = array();
+		} 
+
+		// New cache, therefore remove the old one
+		wp_cache_delete($cache_key, 'themes');
+
+		// Now add our template to the list of templates by merging our templates
+		// with the existing templates array from the cache.
+		$templates = array_merge($templates, $this->templates);
+
+		// Add the modified cache to allow WordPress to pick it up for listing
+		// available templates
+		wp_cache_add($cache_key, $templates, 'themes', 1800);
+
+		return $atts;
+	}
+
+
+	public function view_project_template($template) {
+		global $post;
+
+		if(!$post) {
+			return $template;
+		}
+
+		$template_name = get_post_meta($post->ID, '_wp_page_template', true);
+		if(!isset($this->templates[$template_name])) {
+			return $template;
+		}
+
+		$file = plugin_dir_path(self::FILE) . $template_name;
+
+		if(file_exists($file)) {
+			return $file;
+		}
+
+		return $template;
 	}
 
 

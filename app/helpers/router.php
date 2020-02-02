@@ -6,6 +6,7 @@
 		
 		protected $routes = array();
 		protected $keys = array();
+		static protected $input = '';
 		
 		
 		public function __construct($routes = array()) {
@@ -14,7 +15,7 @@
 		
 		
 		public function route($input) {
-			$input = trim($input, '/');
+			self::$input = trim($input, '/');
 			
 			foreach($this->routes as $route => $controller) {
 				$this->keys = array();
@@ -22,7 +23,7 @@
 				$regex = preg_replace_callback('/\{([^\}]+)\}/', array($this, 'extract_args'), $route);
 				$regex = '/^' . str_replace('/', '\/', $regex) . '$/';
 				
-				if(preg_match($regex, $input, $matches)) {
+				if(preg_match($regex, self::$input, $matches)) {
 					if(!is_array($controller)) {
 						throw new Problem('Invalid controller.');
 					}
@@ -54,10 +55,6 @@
 						call_user_func($controller, $args);
 					}
 					catch(Problem $e) {
-						if($e instanceof Unauthorized) {
-							status_header(403);
-						}
-
 						$controller[0]->handle_error($e);
 					}
 					
@@ -89,5 +86,10 @@
 			
 			// The slash will be escaped later
 			return '([^/]+)';
+		}
+
+
+		static public function get_current_path() {
+			return self::$input ?: '/';
 		}
 	}

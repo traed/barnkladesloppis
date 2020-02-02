@@ -89,8 +89,8 @@
 
 				if($screen->id === 'page') {
 					global $post_id;
-					$allowed = (int)get_post_meta($post_id, 'allow_bkl_admin', true);
-					if(!$allowed) {
+					$template = (int)get_post_meta($post_id, '_wp_page_template', true);
+					if(!in_array($template, array_keys($this->templates))) {
 						wp_redirect(get_admin_url());
 						exit;
 					}
@@ -99,9 +99,9 @@
 				if($screen->id === 'edit-page') {
 					$meta_query = $query->get('meta_query') ?: [];
 					$meta_query[] = [
-						'key' => 'allow_bkl_admin',
-						'value' => 1,
-						'compare' => '='
+						'key' => '_wp_page_template',
+						'value' => array_keys($this->templates),
+						'compare' => 'IN'
 					];
 					$query->set('meta_query', $meta_query);
 					$allowed = 1;

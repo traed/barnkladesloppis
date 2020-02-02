@@ -82,7 +82,7 @@ class Users_Controller extends Controller {
 				exit;
 			}
 
-			$status = $occasion->get_user_status($user->ID, true);
+			$status = $can_sign_up ? $occasion->get_user_status($user->ID, true) : 'none';
 		} else {
 			Admin::notice('Felaktigt användar-ID.', 'error');
 			wp_redirect('/wp-admin/edit.php?post_type=bkl_occasion&page=bkl_users');
