@@ -168,6 +168,8 @@ abstract class Plugin {
 		add_meta_box('bkl_settings', 'Inställningar', Helper::callback('Occasion', 'occasion_settings_callback'), 'bkl_occasion', 'side');
 		add_meta_box('bkl_occasion_users', 'Anmälda användare', Helper::callback('Occasion', 'occasion_users_callback'), 'bkl_occasion');
 		add_meta_box('bkl_occasion_reserves', 'Väntelista', Helper::callback('Occasion', 'occasion_reserve_callback'), 'bkl_occasion');
+
+		add_meta_box('allow_bkl_admin', 'Barnklädesloppis', Helper::callback('Page', 'allow_admin_callback'), 'page', 'side', 'low');
 	}
 
 
@@ -184,12 +186,6 @@ abstract class Plugin {
 			return 'revision';
 		}
 
-		// if($_POST['post_type'] === 'bkl_occasion') {
-		// 	if(!current_user_can('edit_bkl_occasion', $post_id)) {
-		// 		return 'cannot edit occasion';
-		// 	}
-		// }
-
 		$date_start = strtotime($_POST['date_start']) ? $_POST['date_start'] : '';
 		$date_signup = strtotime($_POST['date_signup']) ? $_POST['date_signup'] : '';
 
@@ -197,6 +193,11 @@ abstract class Plugin {
 		update_post_meta($post_id, 'date_signup', $date_signup);
 		update_post_meta($post_id, 'num_spots', (int)$_POST['num_spots']);
 		update_post_meta($post_id, 'seller_fee', (int)$_POST['seller_fee']);
+		if(empty($_POST['allow_bkl_admin'])) {
+			delete_post_meta($post_id, 'allow_bkl_admin');
+		} else {
+			update_post_meta($post_id, 'allow_bkl_admin', (int)$_POST['allow_bkl_admin']);
+		}
 	}
 
 
