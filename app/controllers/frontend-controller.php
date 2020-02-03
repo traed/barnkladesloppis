@@ -74,12 +74,6 @@ class Frontend_Controller extends Controller {
 
 
 	protected function show_logged_in_seller() {
-		if(get_option('bkl_enable_sign_up', false)) {
-			$this->handle_post_sign_up();
-		}
-		$this->handle_post_resign();
-		$this->handle_post_edit_user();
-
 		$occasions = Occasion::get_future();
 		$current_user = wp_get_current_user();
 		$status = 'none';
@@ -114,16 +108,26 @@ class Frontend_Controller extends Controller {
 				exit;
 			}
 
-			$first_name = sanitize_text_field($_POST['first_name']);
-			$last_name = sanitize_text_field($_POST['last_name']);
-			$email = sanitize_email($_POST['email']);
-			$phone = sanitize_text_field($_POST['phone']);
-			
-			if(empty($_POST['password'])) {
-				throw new Problem('Invalid password.');
+			if($_POST['password'] !== $_POST['password_confirm']) {
+				Session::set('registration_error', 'passwords_dont_match');
+				return;
 			}
 
-			$user_id = wp_create_user($email, $_POST['password'], $email);
+			$user_data = [
+				'first_name' => sanitize_text_field($_POST['first_name']),
+				'last_name' => sanitize_text_field($_POST['last_name']),
+				'email' => sanitize_email($_POST['email']),
+				'phone' => sanitize_text_field($_POST['phone']),
+				'has_swish' => (int)$_POST['has_swish'],
+				'password' => $_POST['password']
+			];
+
+			$error = array_filter($user_data, 'empty');
+			if(!empty($error)) {
+				Session::set('registration_error', 'empty_input');
+			}
+
+			$user_id = wp_create_user($user_data['email'], $user_data['password'], $user_data['email']);
 			if(is_wp_error($user_id)) {
 				throw new Problem('Invalid input.');
 			}
@@ -133,21 +137,34 @@ class Frontend_Controller extends Controller {
 
 			wp_update_user([
 				'ID' => $user_id,
-				'display_name' => $first_name . ' ' . $last_name
+				'display_name' => $user_data['first_name'] . ' ' . $user_data['last_name']
 			]);
 
-			update_user_meta($user_id, 'first_name', $first_name);
-			update_user_meta($user_id, 'last_name', $last_name);
-			update_user_meta($user_id, 'phone', $phone);
+			update_user_meta($user_id, 'first_name', $user_data['first_name']);
+			update_user_meta($user_id, 'last_name', $user_data['last_name']);
+			update_user_meta($user_id, 'phone', $user_data['phone']);
+			update_user_meta($user_id, 'has_swish', $user_data['has_swish']);
 
 			wp_signon([
-				'user_login' => $email,
-				'user_password' => $_POST['password']
+				'user_login' => $user_data['email'],
+				'user_password' => $user_data['password']
 			]);
 
 			wp_redirect('/loppis');
 			exit;
 		}
+	}
+
+
+	public function handle_post() {
+		if(!is_user_logged_in() || empty($_POST['action']) || !in_array($_POST['action'], ['sign_up', 'resign', 'edit_user'])) return;
+		
+		if(get_option('bkl_enable_sign_up', false)) {
+			$this->handle_post_sign_up();
+		}
+
+		$this->handle_post_resign();
+		$this->handle_post_edit_user();
 	}
 
 
@@ -184,10 +201,12 @@ class Frontend_Controller extends Controller {
 				$last_name = sanitize_text_field($_POST['last_name']);
 				$email = sanitize_email($_POST['email']);
 				$phone = sanitize_text_field($_POST['phone']);
+				$has_swish = (int)$_POST['has_swish'];
 
 				update_user_meta($user_id, 'first_name', $first_name);
 				update_user_meta($user_id, 'last_name', $last_name);
 				update_user_meta($user_id, 'phone', $phone);
+				update_user_meta($user_id, 'has_swish', $has_swish);
 
 				$data = [
 					'ID' => $user_id,

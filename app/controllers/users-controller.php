@@ -226,6 +226,7 @@ class Users_Controller extends Controller {
 				update_user_meta($user->ID, 'last_name', $last_name);
 				update_user_meta($user->ID, 'phone', sanitize_text_field($_POST['phone']));
 				update_user_meta($user->ID, 'seller_id', (int)$_POST['seller_id']);
+				update_user_meta($user->ID, 'has_swish', (int)$_POST['has_swish']);
 
 				$role = sanitize_key($_POST['role']);
 				if(in_array($role, ['bkl_seller', 'bkl_admin']) && !in_array($role, $user->roles)) {
@@ -280,6 +281,7 @@ class Users_Controller extends Controller {
 			$email = sanitize_email($_POST['email']);
 			$phone = sanitize_text_field($_POST['phone']);
 			$role = $_POST['role'] === 'bkl_admin' ? 'bkl_admin' : 'bkl_seller';
+			$has_swish = (int)$_POST['has_swish'];
 			$password = wp_generate_password();
 
 			$user_id = wp_create_user($email, $password, $email);
@@ -298,6 +300,7 @@ class Users_Controller extends Controller {
 			update_user_meta($user_id, 'first_name', $first_name);
 			update_user_meta($user_id, 'last_name', $last_name);
 			update_user_meta($user_id, 'phone', $phone);
+			update_user_meta($user_id, 'has_swish', $has_swish);
 
 			Admin::notice('Användare skapad!', 'success');
 			wp_redirect('/wp-admin/edit.php?post_type=bkl_occasion&page=bkl_users&id=' . $user_id);

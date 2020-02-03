@@ -7,6 +7,7 @@
 			require_once(self::PATH . '/app/controllers/controller.php');
 			
 			add_action('init', array($this, 'route'));
+			add_action('init', Helper::callback('Frontend', 'handle_post'), 15);
 			add_action('wp_enqueue_scripts', array($this, 'assets'));
 
 			add_action('webbmaffian_before_content', [$this, 'before_content']);

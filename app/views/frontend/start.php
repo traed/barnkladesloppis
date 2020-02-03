@@ -43,6 +43,15 @@ namespace eqhby\bkl; ?>
 						<input type="tel" name="phone" id="phone" class="input" value="<?php echo $current_user->get('phone'); ?>" />
 					</div>
 				</div>
+				<div class="row">
+					<div class="col s12">
+						<input type="hidden" name="has_swish" value="0" />
+						<label>
+							<input type="checkbox" name="has_swish" id="has_swish" value="1"<?php echo (int)$current_user->get('has_swish') ? ' checked' : ''; ?> />
+							<span>Jag har swish anslutet till telefonnummret ovan</span>
+						</label>
+					</div>
+				</div>
 			</div>
 			<div class="modal-footer">
 				<?php wp_nonce_field('bkl_edit_user', 'bkl_edit_user_nonce'); ?>

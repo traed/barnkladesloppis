@@ -30,6 +30,15 @@ namespace eqhby\bkl; ?>
 					<th scope="row"><label for="phone">Telefonnummer</label></th>
 					<td><input name="phone" type="tel" id="phone" value="<?php echo $user->get('phone'); ?>" class="regular-text"></td>
 				</tr>
+
+				<tr>
+					<th scope="row"><label for="has_swish">Swish</label></th>
+					<td>
+						<input type="hidden" name="has_swish" value="0">
+						<input name="has_swish" type="checkbox" id="has_swish" value="1"<?php echo (int)$user->get('has_swish') ? ' checked' : ''; ?>>
+						<span>Användaren har swish</span>
+					</td>
+				</tr>
 	
 				<tr>
 					<th scope="row"><label for="role">Roll</label></th>
