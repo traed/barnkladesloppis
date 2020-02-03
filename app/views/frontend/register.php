@@ -58,7 +58,7 @@
 			<div class="row">
 				<div class="col s6">
 					<label>
-						<input type="checkbox" name="terms" value="1" required>
+						<input type="checkbox" name="terms" value="1"<?php echo !empty($_POST['terms']) ? ' checked' : ''; ?> required>
 						<span>Jag har läst och godkänner villkoren ovan.</span>
 					</label>
 				</div>
