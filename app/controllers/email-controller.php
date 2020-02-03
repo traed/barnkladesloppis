@@ -21,6 +21,11 @@ class Email_Controller extends Controller {
 		if($action === 'send' && wp_verify_nonce($_POST['_wpnonce'], 'bkl_send_email')) {
 			try {
 				$to = $this->get_recipients();
+				if(empty($to)) {
+					Admin::notice('Inga mottagare valda.', 'error');
+					return;
+				}
+
 				$message = apply_filters('the_content', wp_kses_post($_POST['message']));
 	
 				$mailer = new Mailer();
