@@ -103,13 +103,13 @@ class Frontend_Controller extends Controller {
 			$recaptcha = json_decode($recaptcha);
 
 			if(!$recaptcha || $recaptcha->success !== true) {
-				Session::set('registration_error', 'recaptcha_failed');
+				Session::set('registration_error', 'Du fastnade i vårt spamfilter. Prova igen (om du inte är en robot).');
 				wp_redirect('/loppis/reg');
 				exit;
 			}
 
 			if($_POST['password'] !== $_POST['password_confirm']) {
-				Session::set('registration_error', 'passwords_dont_match');
+				Session::set('registration_error', 'Lösenorden matchar inte.');
 				return;
 			}
 
@@ -124,7 +124,7 @@ class Frontend_Controller extends Controller {
 
 			$error = array_filter($user_data, 'empty');
 			if(!empty($error)) {
-				Session::set('registration_error', 'empty_input');
+				Session::set('registration_error', 'Ett eller flera obligatoriska fält är tomma! Vänligen fyll i alla fält.');
 			}
 
 			$user_id = wp_create_user($user_data['email'], $user_data['password'], $user_data['email']);

@@ -7,7 +7,7 @@
 
 	<h2>Registrera</h2>
 	<?php if($error = Session::get_once('registration_error')): ?>
-		<p><?php echo $error; ?></p>
+		<p class="red-text"><?php echo $error; ?></p>
 	<?php endif; ?>
 	<div class="bkl-login_form-wrapper">
 		<form name="bkl_register" id="bkl_register" method="post">
