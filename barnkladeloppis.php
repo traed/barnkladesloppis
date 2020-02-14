@@ -91,6 +91,7 @@ abstract class Plugin {
 				'delete_others_pages' => false,
 				'edit_private_pages' => false,
 				'edit_published_pages' => true,
+				'upload_files' => true,
 			]
 		);
 		add_role(
