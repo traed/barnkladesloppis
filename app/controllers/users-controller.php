@@ -28,7 +28,7 @@ class Users_Controller extends Controller {
 
 			if(in_array($orderby, ['first_name', 'last_name', 'seller_id'])) {
 				$meta_key = $orderby;
-				$orderby = 'meta_value';
+				$orderby = is_numeric($orderby) ? 'meta_value_num' : 'meta_value';
 			}
 
 			if(isset($_GET['order'])) {
@@ -58,14 +58,14 @@ class Users_Controller extends Controller {
 			$query['include'] = $user_ids;
 		}
 
-		if($orderby === 'meta_value') {
+		if($orderby === 'meta_value' || $orderby === 'meta_value_num') {
 			$query['meta_key'] = $meta_key;
 		}
 
 		$users_query = new \WP_User_Query($query);
 		$total_items = $users_query->get_total();
 		$users = (array)$users_query->get_results();
-		$total_pages = ceil($total_items / max(1, count($users)));
+		$total_pages = ceil($total_items / 50);
 
 		include(Plugin::PATH . '/app/views/admin/users.php');
 	}
