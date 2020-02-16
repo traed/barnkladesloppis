@@ -158,31 +158,33 @@ class Occasion {
 	public function get_users($status = false, $only_ids = false) {
 		global $wpdb;
 
-		$query = '
-			SELECT user_id
-			FROM ' . Helper::get_table('occasion_users') . '
-			WHERE occasion_id = %d
-		';
+		$query = 'SELECT user_id FROM ' . Helper::get_table('occasion_users') . ' WHERE occasion_id = %d';
 
 		if($status) {
-			$query .= ' AND status = %s';
+			$query .= $status === 'none' ? ' AND status != %s' : ' AND status = %s';
 			$query = $wpdb->prepare($query, $this->get_ID(), $status);
 		} else {
 			$query = $wpdb->prepare($query, $this->get_ID());
 		}
 
 		$user_ids = $wpdb->get_col($query);
-
-		if($only_ids) return $user_ids;
 		
 		$users = [];
-		if(!empty($user_ids)) {
-			$users = get_users([
-				'include' => $user_ids,
-				'orderby' => 'name',
-				'order' => 'ASC'
-			]);
+		$params = [
+			'role' => 'bkl_seller',
+			'orderby' => 'name',
+			'order' => 'ASC'
+		];
+
+		if($status === 'none') {
+			if(!empty($user_ids)) $params['exclude'] = $user_ids;
+			$users = get_users($params);
+		} elseif(!empty($user_ids)) {
+			$params['include'] = $user_ids;
+			$users = get_users($params);
 		}
+		
+		if($only_ids) return array_map(function($u) { return $u->ID; }, $users);
 
 		return $users;
 	}
