@@ -15,7 +15,7 @@
 		<dt>E-postadress</dt>
 		<dd><?php echo $current_user->get('user_email'); ?></dd>
 		<dt>Telefonnummer</dt>
-		<dd><?php echo $current_user->get('phone'); ?></dd>
+		<dd><?php echo $current_user->get('phone') ?: '-'; ?></dd>
 		<dt>Försäljnings-ID</dt>
 		<dd><?php echo $current_user->get('seller_id') ?: '-'; ?></dd>
 	</dl>
