@@ -29,33 +29,35 @@
 		<br>
 		<hr>
 
-		<h2>E-post</h2>
-		<table class="form-table" role="presentation">
-			<tbody>
-				<tr>
-					<th scope="row"><label for="email_api_key">API-nyckel</label></th>
-					<td><input type="text" name="email_api_key" id="email_api_key" value="<?php echo get_option('bkl_email_api_key', ''); ?>" class="regular-text"></td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="email_api_url">API URL</label></th>
-					<td><input type="text" name="email_api_url" id="email_api_url" value="<?php echo get_option('bkl_email_api_url', ''); ?>" class="regular-text"></td>
-				</tr>
-			</tbody>
-		</table>
+		<?php if(current_user_can('administrator')): ?>
+			<h2>E-post</h2>
+			<table class="form-table" role="presentation">
+				<tbody>
+					<tr>
+						<th scope="row"><label for="email_api_key">API-nyckel</label></th>
+						<td><input type="text" name="email_api_key" id="email_api_key" value="<?php echo get_option('bkl_email_api_key', ''); ?>" class="regular-text"></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="email_api_url">API URL</label></th>
+						<td><input type="text" name="email_api_url" id="email_api_url" value="<?php echo get_option('bkl_email_api_url', ''); ?>" class="regular-text"></td>
+					</tr>
+				</tbody>
+			</table>
 
-		<h2>reCaptcha v3</h2>
-		<table class="form-table" role="presentation">
-			<tbody>
-				<tr>
-					<th scope="row"><label for="recaptcha_site_key">Webbplatsnyckel</label></th>
-					<td><input type="text" name="recaptcha_site_key" id="recaptcha_site_key" value="<?php echo get_option('bkl_recaptcha_site_key', ''); ?>" class="regular-text"></td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="recaptcha_secret">Hemlighet</label></th>
-					<td><input type="text" name="recaptcha_secret" id="recaptcha_secret" value="<?php echo get_option('bkl_recaptcha_secret', ''); ?>" class="regular-text"></td>
-				</tr>
-			</tbody>
-		</table>
+			<h2>reCaptcha v3</h2>
+			<table class="form-table" role="presentation">
+				<tbody>
+					<tr>
+						<th scope="row"><label for="recaptcha_site_key">Webbplatsnyckel</label></th>
+						<td><input type="text" name="recaptcha_site_key" id="recaptcha_site_key" value="<?php echo get_option('bkl_recaptcha_site_key', ''); ?>" class="regular-text"></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="recaptcha_secret">Hemlighet</label></th>
+						<td><input type="text" name="recaptcha_secret" id="recaptcha_secret" value="<?php echo get_option('bkl_recaptcha_secret', ''); ?>" class="regular-text"></td>
+					</tr>
+				</tbody>
+			</table>
+		<?php endif; ?>
 
 		<h2>Anmälan</h2>
 		<table class="form-table" role="presentation">
