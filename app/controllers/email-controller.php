@@ -29,7 +29,7 @@ class Email_Controller extends Controller {
 				$message = apply_filters('the_content', wp_kses_post($_POST['message']));
 	
 				$mailer = new Mailer();
-				$mailer->send($to, 'Testmail', $message);
+				$mailer->send($to, 'Barnklädesloppis', $message);
 
 				Admin::notice('Meddelande skickat!', 'success');
 			} catch(Exception $e) {
