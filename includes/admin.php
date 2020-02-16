@@ -88,6 +88,8 @@
 			static $allowed;
 
 			if(!isset($allowed) && is_admin() && !current_user_can('administrator') && current_user_can('bkl_admin')) {
+				require_once(ABSPATH . 'wp-admin/includes/screen.php');
+
 				$screen = get_current_screen();
 				$allowed = 0;
 
