@@ -369,6 +369,19 @@ class Users_Controller extends Controller {
 				$now = Helper::date('now')->format('Y-m-d--H-i-s');
 				Spreadsheet::export_users($users, 'loppis-utvalda-' . $now);
 			}
+
+			elseif(current_user_can('administrator') && isset($_POST['bulk_action']) && $_POST['bulk_action'] === 'delete' && !empty($_POST['users'])) {
+				if(!empty($_POST['users']) && is_array($_POST['users'])) {
+					foreach($_POST['users'] as $i => $user_id) {
+						wp_delete_user((int)$user_id);
+					}
+					
+					Admin::notice('Deleted ' . ++$i . ' users.', 'success');
+				}
+
+				wp_safe_redirect($_POST['_wp_http_referer']);
+				exit;
+			}
 		}
 	}
 }

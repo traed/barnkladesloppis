@@ -14,6 +14,9 @@
 					<option value="-1">Massåtgärder</option>
 					<option value="export_all">Exportera alla</option>
 					<option value="export_some">Exportera valda</option>
+					<?php if(current_user_can('administrator')): ?>
+						<option value="delete">Radera valda</option>
+					<?php endif; ?>	
 				</select>
 				<button type="submit" name="action" value="bulk" class="button action">Verkställ</button>
 			</div>
