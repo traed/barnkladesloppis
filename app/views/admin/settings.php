@@ -12,7 +12,7 @@
 			'textarea_rows' => 15,
 			'tabindex' => 1
 		);
-		wp_editor(esc_html(get_option('bkl_sign_up_terms', '')), 'sign_up_terms', $settings);
+		wp_editor(get_option('bkl_sign_up_terms', ''), 'sign_up_terms', $settings);
 		?>
 
 		<h2>Registreringsvillkor</h2>
@@ -23,7 +23,7 @@
 			'textarea_rows' => 15,
 			'tabindex' => 1
 		);
-		wp_editor(esc_html(get_option('bkl_registration_terms', '')), 'registration_terms', $settings);
+		wp_editor(get_option('bkl_registration_terms', ''), 'registration_terms', $settings);
 		?>
 
 		<br>
