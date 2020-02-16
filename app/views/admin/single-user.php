@@ -61,7 +61,7 @@ namespace eqhby\bkl; ?>
 				<tr>
 					<th scope="row"><label for="seller_id">Försäljnings-ID</label></th>
 					<td>
-						<input type="text" id="seller_id" name="seller_id" value="<?php echo $user->get('seller_id'); ?>" class="small-text" readonly>
+						<input type="text" id="seller_id" name="seller_id" value="<?php echo $user->get('seller_id'); ?>" class="small-text">
 						<button type="button" class="button" id="clear_seller_id">Rensa</button>
 					</td>
 				</tr>
