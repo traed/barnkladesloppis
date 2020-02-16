@@ -370,7 +370,7 @@ class Users_Controller extends Controller {
 				Spreadsheet::export_users($users, 'loppis-utvalda-' . $now);
 			}
 
-			elseif(current_user_can('administrator') && isset($_POST['bulk_action']) && $_POST['bulk_action'] === 'delete' && !empty($_POST['users'])) {
+			elseif(current_user_can('administrator') && isset($_POST['bulk_action']) && $_POST['bulk_action'] === 'delete') {
 				if(!empty($_POST['users']) && is_array($_POST['users'])) {
 					foreach($_POST['users'] as $i => $user_id) {
 						wp_delete_user((int)$user_id);

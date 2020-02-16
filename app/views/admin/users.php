@@ -18,7 +18,7 @@
 						<option value="delete">Radera valda</option>
 					<?php endif; ?>	
 				</select>
-				<button type="submit" name="action" value="bulk" class="button action">Verkställ</button>
+					<button type="submit" name="action" value="bulk" class="button action"<?php if(current_user_can('administrator')): ?> onclick="return confirm('Är du säker?');"<?php endif;?>>Verkställ</button>
 			</div>
 
 			<div class="alignleft actions">
