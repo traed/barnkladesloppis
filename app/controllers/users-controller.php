@@ -216,7 +216,7 @@ class Users_Controller extends Controller {
 	public function handle_post($action) {
 		if($action === 'edit_user' && isset($_POST['original_email']) && wp_verify_nonce($_POST['_wpnonce'], 'bkl_edit_user')) {
 			$original_email = sanitize_email($_POST['original_email']);
-			$user = get_user_by_email($original_email);
+			$user = get_user_by('email', $original_email);
 
 			if($user) {
 				$first_name = sanitize_text_field($_POST['first_name']);
