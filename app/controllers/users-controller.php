@@ -28,7 +28,7 @@ class Users_Controller extends Controller {
 
 			if(in_array($orderby, ['first_name', 'last_name', 'seller_id'])) {
 				$meta_key = $orderby;
-				$orderby = is_numeric($orderby) ? 'meta_value_num' : 'meta_value';
+				$orderby = $orderby === 'seller_id' ? 'meta_value_num' : 'meta_value';
 			}
 
 			if(isset($_GET['order'])) {
