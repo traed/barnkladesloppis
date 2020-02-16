@@ -213,6 +213,17 @@ class Users_Controller extends Controller {
 	}
 
 
+	private function seller_id_exists($user_id, $seller_id) {
+		$exists = false;
+		if($seller_id > 0) {
+			global $wpdb;
+			$exists = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM $wpdb->usermeta WHERE meta_key = %s AND meta_value = %d AND user_id != %d", 'seller_id', $seller_id, $user_id));
+		}
+
+		return (bool)$exists;
+	}
+
+
 	public function handle_post($action) {
 		if($action === 'edit_user' && isset($_POST['original_email']) && wp_verify_nonce($_POST['_wpnonce'], 'bkl_edit_user')) {
 			$original_email = sanitize_email($_POST['original_email']);
@@ -225,7 +236,6 @@ class Users_Controller extends Controller {
 				update_user_meta($user->ID, 'first_name', $first_name);
 				update_user_meta($user->ID, 'last_name', $last_name);
 				update_user_meta($user->ID, 'phone', sanitize_text_field($_POST['phone']));
-				update_user_meta($user->ID, 'seller_id', (int)$_POST['seller_id']);
 				update_user_meta($user->ID, 'has_swish', (int)$_POST['has_swish']);
 
 				$role = sanitize_key($_POST['role']);
@@ -268,6 +278,12 @@ class Users_Controller extends Controller {
 							Admin::notice('Ett fel inträffade. Kunde inte ändra användarstatus.', 'error');
 						}
 					}
+				}
+
+				if(!$this->seller_id_exists($user->ID, (int)$_POST['seller_id'])) {
+					update_user_meta($user->ID, 'seller_id', (int)$_POST['seller_id']);
+				} else {
+					Admin::notice('Försäljnings-ID är inte tillgängligt. Välj ett annat.', 'error');
 				}
 			}
 
