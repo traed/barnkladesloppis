@@ -59,6 +59,7 @@
 							<ul class="entry-meta">
 								<li>Datum: <?php echo $occasion->get_date_start(); ?></li>
 								<li>Anmälan öppnar: <?php echo $occasion->get_date_signup(); ?></li>
+								<li>Inlämning: <?php echo $occasion->get_date_turnin(); ?></li>
 								<li>Avgift: <?php echo $occasion->get_seller_fee(); ?> kr</li>
 							</ul><!-- .entry-meta -->
 

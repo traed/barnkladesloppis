@@ -40,11 +40,8 @@ abstract class Plugin {
 		}
 
 		add_action('init', array($this, 'add_custom_post_type'));
-		add_action('add_meta_boxes', array($this, 'add_custom_meta_box'));
-		add_action('save_post', array($this, 'save_meta_fields'));
-		add_action('new_to_publish', array($this, 'save_meta_fields'));
+		
 		add_filter('login_redirect', array($this, 'redirect_login'), 10, 3);
-
 		add_filter('register_url', array($this, 'register_url'));
 		add_action('login_form_register', array($this, 'redirect_register'));
 
@@ -174,36 +171,6 @@ abstract class Plugin {
 			'capability_type' => 'bkl_occasion',
 			'supports' => ['title']
 		]);
-	}
-
-
-	public function add_custom_meta_box() {
-		add_meta_box('bkl_settings', 'Inställningar', Helper::callback('Occasion', 'occasion_settings_callback'), 'bkl_occasion', 'side');
-		add_meta_box('bkl_occasion_users', 'Anmälda användare', Helper::callback('Occasion', 'occasion_users_callback'), 'bkl_occasion');
-		add_meta_box('bkl_occasion_reserves', 'Väntelista', Helper::callback('Occasion', 'occasion_reserve_callback'), 'bkl_occasion');
-	}
-
-
-	public function save_meta_fields($post_id) {
-		if(!isset($_POST['bkl_metabox_nonce']) || !wp_verify_nonce($_POST['bkl_metabox_nonce'], 'bkl_occasion_save')) {
-			return 'nonce not verified';
-		}
-
-		if(wp_is_post_autosave($post_id)) {
-			return 'autosave';
-		}
-	
-	  	if(wp_is_post_revision($post_id)) {
-			return 'revision';
-		}
-
-		$date_start = strtotime($_POST['date_start']) ? $_POST['date_start'] : '';
-		$date_signup = strtotime($_POST['date_signup']) ? $_POST['date_signup'] : '';
-
-		update_post_meta($post_id, 'date_start', $date_start);
-		update_post_meta($post_id, 'date_signup', $date_signup);
-		update_post_meta($post_id, 'num_spots', (int)$_POST['num_spots']);
-		update_post_meta($post_id, 'seller_fee', (int)$_POST['seller_fee']);
 	}
 
 

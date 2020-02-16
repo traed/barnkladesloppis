@@ -8,6 +8,7 @@ class Occasion_Controller extends Controller {
 
 		$date_start = get_post_meta($post->ID, 'date_start', true) ?: '';
 		$date_signup = get_post_meta($post->ID, 'date_signup', true) ?: '';
+		$date_turnin = get_post_meta($post->ID, 'date_turnin', true) ?: '';
 		$num_spots = get_post_meta($post->ID, 'num_spots', true) ?: '';
 		$seller_fee = get_post_meta($post->ID, 'seller_fee', true) ?: '';
 
@@ -20,6 +21,10 @@ class Occasion_Controller extends Controller {
 		<div>
 			<div><label for="date_start">Startdatum</label></div>
 			<input type="date" name="date_start" id="date_start" value="<?php echo $date_start; ?>">
+		</div>
+		<div>
+			<div><label for="date_turnin">Inlämning</label></div>
+			<input type="date" name="date_turnin" id="date_turnin" value="<?php echo $date_turnin; ?>">
 		</div>
 		<div>
 			<div><label for="num_spots">Antal platser</label></div>
