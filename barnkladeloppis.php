@@ -2,7 +2,7 @@
 /*
 	Plugin Name: Barnklädesloppis
 	Description: Plugin som hanterar barnklädesloppisens anmälningssystem.
-	Version: 1.0.0
+	Version: 1.0.1
 	Author: Mattias Forsman
 	Author URI: https://github.com/traed
 */
@@ -10,7 +10,7 @@
 namespace eqhby\bkl;
 
 abstract class Plugin {
-	const VERSION = '1.0.0';
+	const VERSION = '1.0.1';
 	const SLUG = 'bkl';
 	const TABLE_PREFIX = 'bkl_';
 	const FILE = __FILE__;
