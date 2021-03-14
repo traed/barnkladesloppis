@@ -26,10 +26,11 @@ class Email_Controller extends Controller {
 					return;
 				}
 
+				$subject = sanitize_text_field($_POST['subject'] ?? 'Barnklädesloppis');
 				$message = apply_filters('the_content', wp_kses_post($_POST['message']));
 	
 				$mailer = new Mailer();
-				$mailer->send($to, 'Barnklädesloppis', $message);
+				$mailer->send($to, $subject, $message);
 
 				Admin::notice('Meddelande skickat!', 'success');
 			} catch(Exception $e) {

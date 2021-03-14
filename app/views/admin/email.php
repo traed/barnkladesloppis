@@ -7,6 +7,12 @@
 		<table class="form-table" role="presentation">
 			<tbody>
 				<tr>
+					<th scope="row">Ämne</th>
+					<td>
+						<input type="text" id="subject" name="subject" class="regular-text">
+					</td>
+				</tr>
+				<tr>
 					<th scope="row">Meddelande</th>
 					<td>
 						<?php
