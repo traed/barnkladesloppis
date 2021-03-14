@@ -17,7 +17,6 @@ class Settings_Controller extends Controller {
 
 			if(current_user_can('administrator')) {
 				update_option('bkl_email_api_key', sanitize_text_field($_POST['email_api_key']));
-				update_option('bkl_email_api_url', sanitize_text_field($_POST['email_api_url']));
 				update_option('bkl_recaptcha_site_key', sanitize_text_field($_POST['recaptcha_site_key']));
 				update_option('bkl_recaptcha_secret', sanitize_text_field($_POST['recaptcha_secret']));
 			}

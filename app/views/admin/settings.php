@@ -37,10 +37,6 @@
 						<th scope="row"><label for="email_api_key">API-nyckel</label></th>
 						<td><input type="text" name="email_api_key" id="email_api_key" value="<?php echo get_option('bkl_email_api_key', ''); ?>" class="regular-text"></td>
 					</tr>
-					<tr>
-						<th scope="row"><label for="email_api_url">API URL</label></th>
-						<td><input type="text" name="email_api_url" id="email_api_url" value="<?php echo get_option('bkl_email_api_url', ''); ?>" class="regular-text"></td>
-					</tr>
 				</tbody>
 			</table>
 
