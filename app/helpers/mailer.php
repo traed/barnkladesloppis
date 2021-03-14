@@ -2,20 +2,19 @@
 
 namespace eqhby\bkl;
 
-use Mailgun\Mailgun;
+use MailerSend\MailerSend;
+use MailerSend\Helpers\Builder\Recipient;
+use MailerSend\Helpers\Builder\EmailParams;
 
 class Mailer {
 
 	private $client;
-	private $domain;
 
 	public function __construct() {
 		$api_key = get_option('bkl_email_api_key');
-		$domain = get_option('bkl_email_api_url');
 
-		if($api_key && $domain) {
-			$this->client = Mailgun::create($api_key, 'https://api.eu.mailgun.net');;
-			$this->domain = $domain;
+		if($api_key) {
+			$this->client = new MailerSend(['api_key' => $api_key]);
 		} else {
 			throw new Problem('Kunde inte ansluta till eposttjänsten.');
 		}
@@ -30,25 +29,43 @@ class Mailer {
 	 * @return void
 	 */
 	public function send(array $to, string $subject, string $message) {
-		$batch_message = $this->client->messages()->getBatchMessage($this->domain);
-		$batch_message->setFromAddress('loppis@equmeniahasselby.se', ['full_name' => 'Barnklädesloppis']);
-		$batch_message->setSubject($subject);
-		$batch_message->setHtmlBody($message);
-		$batch_message->addCustomData('user', [
-			'sellerId' => '%recipient.sellerId%'
-		]);
+		$recipients = array_map(function($t) {
+			return new Recipient($t['email'], $t['first'] . ' ' . $t['last']);
+		}, $to);
 
-		$chunks = array_chunk($to, 750);
+		$variables = array_map(function($t) {
+			return [
+				'email' => $t['email'],
+				'substitutions' => [
+					[
+						'var' => 'email',
+						'value' => (string)$t['email']
+					],
+					[
+						'var' => 'first',
+						'value' => (string)$t['first']
+					],
+					[
+						'var' => 'last',
+						'value' => (string)$t['last']
+					],
+					[
+						'var' => 'sellerId',
+						'value' => (string)$t['seller_id']
+					]
+				]
+			];
+		}, $to);
 
-		foreach($chunks as $users) {
-			foreach($users as $user) {
-				$batch_message->addToRecipient($user['email'], [
-					'first' => $user['first'],
-					'last' => $user['last'],
-					'sellerId' => $user['seller_id'],
-				]);
-			}
-			$batch_message->finalize();
-		}
+		$email = (new EmailParams())
+			->setFrom('loppis@equmeniahasselby.se')
+			->setFromName('Barnklädesloppis')
+			->setRecipients($recipients)
+			->setSubject($subject)
+			->setHtml($message)
+			->setText(wp_strip_all_tags($message))
+			->setVariables($variables);
+
+		$this->client->email->send($email);
 	}
 }

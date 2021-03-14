@@ -75,7 +75,7 @@ class Email_Controller extends Controller {
 				'email' => $user->get('user_email'),
 				'first' => $user->get('first_name'),
 				'last' => $user->get('last_name'),
-				'seller_id' => $user->get('seller_id')
+				'seller_id' => $user->get('seller_id') ?: '0'
 			];
 		}
 

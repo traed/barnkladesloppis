@@ -20,6 +20,17 @@
 					</td>
 				</tr>
 				<tr>
+					<th scope="row">Tillgängliga variabler</th>
+					<td>
+						<ul>
+							<li><pre style="display: inline;">{$first}</pre> - Förnamn</li>
+							<li><pre style="display: inline;">{$last}</pre> - Efternamn</li>
+							<li><pre style="display: inline;">{$email}</pre> - E-postadress</li>
+							<li><pre style="display: inline;">{$sellerId}</pre> - Säljarnummer</li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
 					<th scope="row"><label for="recipients">Mottagare</label></th>
 					<td>
 						<select name="recipients" id="recipients">
