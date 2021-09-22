@@ -58,8 +58,8 @@
 							<h3 class="entry-title h4"><?php echo get_the_title($occasion->get_ID()); ?></h3>
 							<ul class="entry-meta">
 								<li>Datum: <?php echo $occasion->get_date_start(); ?></li>
-								<li>Anmälan öppnar: <?php echo $occasion->get_date_signup(); ?></li>
-								<li>Inlämning: <?php echo $occasion->get_date_turnin(); ?></li>
+								<li>Anmälan öppnar: <?php echo $occasion->get_date_signup() ?: 'Snart!'; ?></li>
+								<li>Inlämning: <?php echo $occasion->get_date_turnin() ?: '-'; ?></li>
 								<li>Avgift: <?php echo $occasion->get_seller_fee(); ?> kr</li>
 							</ul><!-- .entry-meta -->
 
