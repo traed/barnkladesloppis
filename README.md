@@ -1,1 +1,1 @@
-# Ett plugin för Eqbhy Barklädesloppis
+# Ett plugin för [Equmenia Hässelbys Barklädesloppis](https://equmeniahasselby.se/loppis)
