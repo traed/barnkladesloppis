@@ -3,6 +3,6 @@
         "nyholm/psr7": "^1.2",
         "phpoffice/phpspreadsheet": "^1.10",
         "php-http/guzzle6-adapter": "^2.0",
-        "mailersend/mailersend": "^0.2.0"
+        "mailersend/mailersend": "^0.3.0"
     }
 }

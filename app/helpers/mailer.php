@@ -5,6 +5,7 @@ namespace eqhby\bkl;
 use MailerSend\MailerSend;
 use MailerSend\Helpers\Builder\Recipient;
 use MailerSend\Helpers\Builder\EmailParams;
+use MailerSend\Helpers\Builder\Variable;
 
 class Mailer {
 
@@ -34,33 +35,22 @@ class Mailer {
 		}, $to);
 
 		$variables = array_map(function($t) {
-			return [
-				'email' => $t['email'],
-				'substitutions' => [
-					[
-						'var' => 'email',
-						'value' => (string)$t['email']
-					],
-					[
-						'var' => 'first',
-						'value' => (string)$t['first']
-					],
-					[
-						'var' => 'last',
-						'value' => (string)$t['last']
-					],
-					[
-						'var' => 'sellerId',
-						'value' => (string)$t['seller_id']
-					]
+			return new Variable(
+				$t['email'],
+				[
+					'email' => (string)$t['email'],
+					'first' => (string)$t['first'],
+					'last' => (string)$t['last'],
+					'sellerId' => (string)$t['seller_id']
 				]
-			];
+			);
 		}, $to);
 
 		$email = (new EmailParams())
 			->setFrom('loppis@equmeniahasselby.se')
 			->setFromName('Barnklädesloppis')
-			->setRecipients($recipients)
+			->setRecipients([new Recipient('loppis@equmeniahasselby.se', 'Barnklädesloppis')])
+			->setBcc($recipients)
 			->setSubject($subject)
 			->setHtml($message)
 			->setText(wp_strip_all_tags($message))

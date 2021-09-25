@@ -3,6 +3,7 @@
 namespace eqhby\bkl;
 
 use Exception;
+use MailerSend\Exceptions\MailerSendValidationException;
 
 class Email_Controller extends Controller {
 
@@ -33,6 +34,11 @@ class Email_Controller extends Controller {
 				$mailer->send($to, $subject, $message);
 
 				Admin::notice('Meddelande skickat!', 'success');
+			} catch(MailerSendValidationException $e) {
+				$body = $e->getResponse()->getBody();
+
+				Log::error($body);
+				Admin::notice('Något gick fel. Se systemloggen för mer info.', 'error');
 			} catch(Exception $e) {
 				Log::error($e->getMessage());
 				Log::error($e->getTrace());
