@@ -9,6 +9,8 @@
 
 namespace eqhby\bkl;
 
+use Exception;
+
 abstract class Plugin {
 	const VERSION = '1.0.1';
 	const SLUG = 'bkl';
@@ -50,6 +52,17 @@ abstract class Plugin {
 		add_filter('wp_insert_post_data', array($this, 'register_project_templates'));
 		add_filter('template_include', array($this, 'view_project_template'));
 
+		// Add schedule stuff
+		add_filter('cron_schedules', function( $schedules ) {
+			$schedules['every_other_minute'] = [
+				'interval' => 120,
+				'display' => 'Every other minute'
+			];
+
+			return $schedules;
+		});
+		add_action('bkl_send_batch_emails', [$this, 'send_batch_emails']);
+
 		// Add your templates to this array.
 		$this->templates = array(
 			'app/views/frontend/bkl-page-template.php' => 'Loppis-sida'
@@ -60,6 +73,10 @@ abstract class Plugin {
 
 
 	public function install() {
+		if(!wp_next_scheduled('bkl_send_batch_emails')) {
+			wp_schedule_event(time(), 'every_other_minute', 'bkl_send_batch_emails');
+		}
+
 		add_role(
 			'bkl_admin',
 			'Loppis-admin',
@@ -112,6 +129,19 @@ abstract class Plugin {
 				time_updated datetime NOT NULL,
 				status varchar(16) NOT NULL,
 				PRIMARY KEY (occasion_id, user_id)
+		) ' . $charset;
+		
+		$tables[] = '
+			CREATE TABLE IF NOT EXISTS ' . Helper::get_table('emails') . ' (
+				id int NOT NULL AUTO_INCREMENT,
+				subject varchar(128) NOT NULL,
+				message varchar(255) NOT NULL,
+				recipient text NOT NULL,
+				time_created datetime NOT NULL,
+				time_sent datetime,
+				PRIMARY KEY (id),
+				KEY time_created (time_created),
+				KEY time_sent (time_sent)
 		) ' . $charset;
 			
 		foreach($tables as $table) {
@@ -245,6 +275,28 @@ abstract class Plugin {
         wp_redirect(wp_registration_url());
         exit;
     }
+
+
+	public function send_batch_emails() {
+		try {
+			$mailer = new Mailer();
+			$batch = $mailer->get_next_batch();
+	
+			if(!empty($batch)) {
+				Log::email('Sending batch...');
+		
+				$mailer->send($batch);
+		
+				Log::email('Batch sent!');
+			}
+		} catch(Exception $e) {
+			Log::email($e->getMessage());
+
+			if(!defined('DOING_CRON') || !DOING_CRON) {
+				Admin::notice('Något gick fel. Se systemloggen för mer info.', 'error');
+			}
+		}
+	}
 	
 	
 	protected function init() {

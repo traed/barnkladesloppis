@@ -3,23 +3,31 @@
 namespace eqhby\bkl;
 
 use Exception;
-use MailerSend\Exceptions\MailerSendValidationException;
 
 class Email_Controller extends Controller {
 
 	public function init() {
+		global $wpdb;
+
 		$all_sellers = get_users([
 			'role' => 'bkl_seller',
 			'orderby' => 'display_name',
 			'order' => 'ASC'
 		]);
 
+		$num_queued_messaged = (int)$wpdb->get_var('SELECT COUNT(*) FROM ' . Helper::get_table('emails') . ' WHERE time_sent IS NULL');
+
 		include(Plugin::PATH . '/app/views/admin/email.php');
 	}
 
 
 	public function handle_post($action) {
-		if($action === 'send' && wp_verify_nonce($_POST['_wpnonce'], 'bkl_send_email')) {
+		if(!wp_verify_nonce($_POST['_wpnonce'], 'bkl_send_email')) {
+			Admin::notice('Kunde inte verifiera användare. Prova att ladda om sidan.', 'error');
+			return;
+		}
+
+		if($action === 'enqueue') {
 			try {
 				$to = $this->get_recipients();
 				if(empty($to)) {
@@ -31,20 +39,21 @@ class Email_Controller extends Controller {
 				$message = apply_filters('the_content', wp_kses_post($_POST['message']));
 	
 				$mailer = new Mailer();
-				$mailer->send($to, $subject, $message);
+				$mailer->enqueue($to, $subject, $message);
 
-				Admin::notice('Meddelande skickat!', 'success');
-			} catch(MailerSendValidationException $e) {
-				$body = $e->getResponse()->getBody();
-
-				Log::error($body);
-				Admin::notice('Något gick fel. Se systemloggen för mer info.', 'error');
+				Admin::notice('Meddelanden har lagt till i kön. Köade meddelanden skickas inom ett par minuter.', 'success');
 			} catch(Exception $e) {
 				Log::error($e->getMessage());
 				Log::error($e->getTrace());
 				Admin::notice('Något gick fel. Se systemloggen för mer info.', 'error');
 			}
 
+			wp_safe_redirect($_POST['_wp_http_referer']);
+			exit;
+		}
+
+		else if($action === 'send') {
+			do_action('bkl_send_batch_emails');
 			wp_safe_redirect($_POST['_wp_http_referer']);
 			exit;
 		}
@@ -79,10 +88,10 @@ class Email_Controller extends Controller {
 
 		foreach($users as $user) {
 			$recipients[] = [
-				'email' => $user->get('user_email'),
-				'first' => $user->get('first_name'),
-				'last' => $user->get('last_name'),
-				'seller_id' => $user->get('seller_id') ?: '0'
+				'email' => (string)$user->get('user_email'),
+				'first' => (string)$user->get('first_name'),
+				'last' => (string)$user->get('last_name'),
+				'seller_id' => (string)$user->get('seller_id') ?: '0'
 			];
 		}
 

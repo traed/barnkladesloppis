@@ -66,13 +66,23 @@
 						<p class="description">Statusen avser användarens anmälningsstatus för det valda loppis-tillfället.</p>
 					</td>
 				</tr>
+				<tr>
+					<th scope="row">Meddelanden i kö</th>
+					<td>
+						<?php echo $num_queued_messaged; ?>
+					</td>
+				</tr>
 			</tbody>
 		</table>
 
 		<p class="submit">
 			<?php wp_nonce_field('bkl_send_email'); ?>
 			<input type="hidden" name="controller" value="Email">
-			<button type="submit" name="action" value="send" class="button button-primary">Skicka</button>
+			<button type="submit" name="action" value="enqueue" class="button button-primary">Lägg i kö</button>
+
+			<?php if($num_queued_messaged > 0): ?>
+				<button type="submit" name="action" value="send" class="button button-secondary">Skicka köade</button>
+			<?php endif; ?>
 		</p>
-	</form>
+	</form>	
 </div>

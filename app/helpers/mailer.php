@@ -2,12 +2,15 @@
 
 namespace eqhby\bkl;
 
+use Exception;
 use MailerSend\MailerSend;
 use MailerSend\Helpers\Builder\Recipient;
 use MailerSend\Helpers\Builder\EmailParams;
 use MailerSend\Helpers\Builder\Variable;
 
 class Mailer {
+	const FROM_NAME = 'Barnklädesloppis';
+	const FROM_EMAIL = 'loppis@equmeniahasselby.se';
 
 	private $client;
 
@@ -29,33 +32,82 @@ class Mailer {
 	 * 
 	 * @return void
 	 */
-	public function send(array $to, string $subject, string $message) {
-		$recipients = array_map(function($t) {
-			return new Recipient($t['email'], $t['first'] . ' ' . $t['last']);
-		}, $to);
+	public function enqueue(array $to, string $subject, string $message): void {
+		global $wpdb;
 
-		$variables = array_map(function($t) {
-			return new Variable(
-				$t['email'],
-				[
-					'email' => (string)$t['email'],
-					'first' => (string)$t['first'],
-					'last' => (string)$t['last'],
-					'sellerId' => (string)$t['seller_id']
-				]
-			);
-		}, $to);
+		foreach($to as $recipient) {
+			$wpdb->insert(Helper::get_table('emails'), [
+				'recipient' => serialize($recipient),
+				'subject' => $subject,
+				'message' => $message,
+				'time_created' => Helper::date('now')->format('Y-m-d H:i:s')
+			], ['%s', '%s', '%s', '%s']);
+		}
+	}
 
-		$email = (new EmailParams())
-			->setFrom('loppis@equmeniahasselby.se')
-			->setFromName('Barnklädesloppis')
-			->setRecipients([new Recipient('loppis@equmeniahasselby.se', 'Barnklädesloppis')])
-			->setBcc($recipients)
-			->setSubject($subject)
-			->setHtml($message)
-			->setText(wp_strip_all_tags($message))
-			->setVariables($variables);
 
-		$this->client->email->send($email);
+	public function send(array $batch): void {
+		foreach($batch as $email) {
+			try {
+				$recipient = new Recipient(
+					$email['recipient']['email'],
+					$email['recipient']['first'] . ' ' . $email['recipient']['last']
+				);
+
+				$variables = new Variable(
+					$email['recipient']['email'],
+					$email['recipient']
+				);
+
+				$message = (new EmailParams())
+					->setFrom(self::FROM_EMAIL)
+					->setFromName(self::FROM_NAME)
+					->setRecipients([$recipient])
+					->setSubject($email['subject'])
+					->setHtml($email['message'])
+					->setText(wp_strip_all_tags($email['message']))
+					->setVariables([$variables]);
+		
+				$this->client->email->send($message);
+			} catch(Exception $e) {
+				Log::email($e->getMessage());
+			}
+		}
+	}
+
+
+	public function get_next_batch(): array {
+		global $wpdb;
+
+		$results = $wpdb->get_results('
+			SELECT *
+			FROM ' . Helper::get_table('emails') . ' 
+			WHERE time_sent IS NULL 
+			ORDER BY time_created ASC 
+			LIMIT 100
+		', ARRAY_A);
+
+		$ids = [];
+		$return = [];
+
+		if(!empty($results)) {
+			foreach($results as $result) {
+				$return[] = [
+					'recipient' => unserialize($result['recipient']),
+					'subject' => $result['subject'],
+					'message' => $result['message']
+				];
+				$ids[] = (int)$result['id'];
+			}
+			
+			$wpdb->query($wpdb->prepare(
+				'UPDATE ' . Helper::get_table('emails') . '
+				SET time_sent = %s
+				WHERE id IN (' . implode(',', $ids) . ')',
+				Helper::date('now')->format('Y-m-d H:i:s')
+			));
+		}
+
+		return $return;
 	}
 }
