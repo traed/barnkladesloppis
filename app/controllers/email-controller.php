@@ -37,6 +37,16 @@ class Email_Controller extends Controller {
 
 				$subject = sanitize_text_field($_POST['subject'] ?? 'Barnklädesloppis');
 				$message = apply_filters('the_content', wp_kses_post($_POST['message']));
+
+				if(strlen($subject) < 1) {
+					Admin::notice('Du måste ange ett ämne.', 'error');
+					return;
+				}
+
+				if(strlen($message) < 1) {
+					Admin::notice('Du måste ange ett meddelande.', 'error');
+					return;
+				}
 	
 				$mailer = new Mailer();
 				$mailer->enqueue($to, $subject, $message);

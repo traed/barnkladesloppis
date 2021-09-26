@@ -9,7 +9,7 @@
 				<tr>
 					<th scope="row">Ämne</th>
 					<td>
-						<input type="text" id="subject" name="subject" class="regular-text">
+						<input type="text" id="subject" name="subject" class="regular-text" value="<?php echo esc_attr($_POST['subject'] ?? ''); ?>">
 					</td>
 				</tr>
 				<tr>
@@ -21,7 +21,7 @@
 							'textarea_rows' => 15,
 							'tabindex' => 1
 						);
-						wp_editor('', 'message', $settings);
+						wp_editor($_POST['message'] ?? '', 'message', $settings);
 						?>
 					</td>
 				</tr>
