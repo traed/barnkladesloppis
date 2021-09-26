@@ -26,7 +26,7 @@ class Mailer {
 
 
 	/**
-	 * @param array $to Array with the following keys: email, first, last, sellerId
+	 * @param array $to Array with the following keys: email, first, last, seller_id
 	 * @param string $subject
 	 * @param string $message A HTML formated message
 	 * 
