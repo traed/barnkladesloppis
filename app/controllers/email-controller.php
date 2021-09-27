@@ -49,9 +49,14 @@ class Email_Controller extends Controller {
 				}
 	
 				$mailer = new Mailer();
-				$mailer->enqueue($to, $subject, $message);
+				$success = $mailer->enqueue($to, $subject, $message);
 
-				Admin::notice('Meddelanden har lagt till i kön. Köade meddelanden skickas inom ett par minuter.', 'success');
+				if($success) {
+					Admin::notice('Meddelanden har lagt till i kön. Köade meddelanden skickas inom ett par minuter.', 'success');
+				} else {
+					Admin::notice('Meddelanden har lagt till i kön, men vissa fel inträffade. Kontrollera systemloggen för mer info.', 'warning');
+				}
+
 			} catch(Exception $e) {
 				Log::error($e->getMessage());
 				Log::error($e->getTrace());

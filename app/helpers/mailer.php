@@ -7,6 +7,7 @@ use MailerSend\MailerSend;
 use MailerSend\Helpers\Builder\Recipient;
 use MailerSend\Helpers\Builder\EmailParams;
 use MailerSend\Helpers\Builder\Variable;
+use PhpOffice\PhpSpreadsheet\Calculation\Logical\Boolean;
 
 class Mailer {
 	const FROM_NAME = 'Barnklädesloppis';
@@ -30,19 +31,30 @@ class Mailer {
 	 * @param string $subject
 	 * @param string $message A HTML formated message
 	 * 
-	 * @return void
+	 * @return bool Returns true if successful or false if there were any errors.
 	 */
-	public function enqueue(array $to, string $subject, string $message): void {
+	public function enqueue(array $to, string $subject, string $message): bool {
 		global $wpdb;
 
+		$errors = false;
+
 		foreach($to as $recipient) {
-			$wpdb->insert(Helper::get_table('emails'), [
+			$data = [
 				'recipient' => serialize($recipient),
 				'subject' => $subject,
 				'message' => $message,
 				'time_created' => Helper::date('now')->format('Y-m-d H:i:s')
-			], ['%s', '%s', '%s', '%s']);
+			];
+			$result = $wpdb->insert(Helper::get_table('emails'), $data, ['%s', '%s', '%s', '%s']);
+
+			if(!$result) {
+				$errors = true;
+				Log::email('Failed to enqueue email.');
+				Log::email($data);
+			}
 		}
+
+		return !$errors;
 	}
 
 

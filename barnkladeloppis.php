@@ -135,7 +135,7 @@ abstract class Plugin {
 			CREATE TABLE IF NOT EXISTS ' . Helper::get_table('emails') . ' (
 				id int NOT NULL AUTO_INCREMENT,
 				subject varchar(128) NOT NULL,
-				message varchar(255) NOT NULL,
+				message text NOT NULL,
 				recipient text NOT NULL,
 				time_created datetime NOT NULL,
 				time_sent datetime,
