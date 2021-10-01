@@ -302,7 +302,9 @@ class Users_Controller extends Controller {
 
 			$user_id = wp_create_user($email, $password, $email);
 			if(is_wp_error($user_id)) {
-				throw new Problem('Invalid input.');
+				Admin::notice('Användaren kunde inte skapas. Kontrollera att epostadressen är korrekt och att det inte redan finns en användare med samma epostadress.', 'error');
+				wp_safe_redirect($_POST['_wp_http_referer']);
+				exit;
 			}
 
 			$user = get_user_by('ID', $user_id);
