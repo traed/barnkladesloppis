@@ -125,11 +125,13 @@ class Frontend_Controller extends Controller {
 			$error = array_filter($user_data, 'empty');
 			if(!empty($error)) {
 				Session::set('registration_error', 'Ett eller flera obligatoriska fält är tomma! Vänligen fyll i alla fält.');
+				return;
 			}
 
 			$user_id = wp_create_user($user_data['email'], $user_data['password'], $user_data['email']);
 			if(is_wp_error($user_id)) {
-				throw new Problem('Invalid input.');
+				Session::set('registration_error', 'Kunde inte slutföra registreringen. Kontakta oss så hjälper vi dig.');
+				return;
 			}
 
 			$user = get_user_by('ID', $user_id);
