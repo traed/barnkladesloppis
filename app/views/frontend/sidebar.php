@@ -61,6 +61,7 @@
 								<li>Anmälan öppnar: <?php echo $occasion->get_date_signup() ?: 'Snart!'; ?></li>
 								<li>Inlämning: <?php echo $occasion->get_date_turnin() ?: '-'; ?></li>
 								<li>Avgift: <?php echo $occasion->get_seller_fee(); ?> kr</li>
+								<li>Platser kvar: <?php echo max(0, $occasion->get_num_spots() - $occasion->count_users('signed_up')); ?></li>
 							</ul><!-- .entry-meta -->
 
 							<?php if(!is_user_logged_in()): ?>
