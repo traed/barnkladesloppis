@@ -16,6 +16,7 @@ class Spreadsheet {
 		$sheet->setCellValue('C1', 'Efternamn');
 		$sheet->setCellValue('D1', 'E-post');
 		$sheet->setCellValue('E1', 'Telefonnummer');
+		$sheet->setCellValue('F1', 'Har swish');
 
 		foreach($users as $i => $user) {
 			$sheet->setCellValueByColumnAndRow(1, $i + 2, $user->get('seller_id'));
@@ -23,6 +24,7 @@ class Spreadsheet {
 			$sheet->setCellValueByColumnAndRow(3, $i + 2, $user->get('last_name'));
 			$sheet->setCellValueByColumnAndRow(4, $i + 2, $user->get('user_email'));
 			$sheet->setCellValueByColumnAndRow(5, $i + 2, $user->get('phone'));
+			$sheet->setCellValueByColumnAndRow(6, $i + 2, get_user_meta($user->ID, 'has_swish', true) ? 'Ja' : 'Nej');
 		}
 
 		$writer = new Xlsx($spreadsheet);
