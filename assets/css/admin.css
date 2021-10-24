@@ -2,3 +2,9 @@
 .bkl_occasion_page_bkl_email .wp-editor-wrap {
 	max-width: 1200px;
 }
+
+.bkl-message-queue {
+	display: flex;
+	align-items: baseline;
+	gap: 10px;
+}

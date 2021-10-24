@@ -15,8 +15,17 @@ class Email_Controller extends Controller {
 			'order' => 'ASC'
 		]);
 
-		$num_queued_messaged = Mailer::count(Mailer::STATUS_ENQUEUED);
-		$num_pending_messaged = Mailer::count(Mailer::STATUS_PENDING);
+		$num_queued_messages = Mailer::count(Mailer::STATUS_ENQUEUED);
+		$num_messages = Mailer::count(Mailer::STATUS_PENDING) + $num_queued_messages;
+
+		$messages = $wpdb->get_results($wpdb->prepare('
+			SELECT COUNT(recipient) AS recipients, message_id, subject, status, time_created
+			FROM ' . Helper::get_table('emails') . '
+			WHERE status != %s
+			GROUP BY message_id, status
+			ORDER BY time_created ASC',
+			Mailer::STATUS_SENT
+		), ARRAY_A);
 
 		include(Plugin::PATH . '/app/views/admin/email.php');
 	}

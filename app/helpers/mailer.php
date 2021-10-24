@@ -131,18 +131,15 @@ class Mailer {
 	}
 
 
-	static public function count($status): int {
+	static public function count(string $status): int {
 		global $wpdb;
 
-		if(is_array($status)) {
-			$status = implode(',', $status);
-		}
-
-		return (int)$wpdb->get_var('
+		return (int)$wpdb->get_var($wpdb->prepare('
 			SELECT COUNT(*)
 			FROM ' . Helper::get_table('emails') . '
-			WHERE status IN (' . $status . ')'
-		);
+			WHERE status = %s',
+			$status
+		));
 	}
 
 
@@ -180,5 +177,19 @@ class Mailer {
 			],
 			['%s']
 		);
+	}
+
+
+	static public function get_status_label(string $status): string {
+		switch($status) {
+			case self::STATUS_ENQUEUED:
+				return 'Köad';
+			case self::STATUS_PENDING:
+				return 'Väntar';
+			case self::STATUS_SENT:
+				return 'Skickat';
+			default:
+				return 'Okänd';
+		}
 	}
 }

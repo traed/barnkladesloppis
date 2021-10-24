@@ -66,24 +66,60 @@
 						<p class="description">Statusen avser användarens anmälningsstatus för det valda loppis-tillfället.</p>
 					</td>
 				</tr>
-				<tr>
-					<th scope="row">Meddelanden i kö</th>
-					<td>
-						<?php echo $num_queued_messaged + $num_pending_messaged; ?>
-					</td>
-				</tr>
 			</tbody>
 		</table>
 
 		<p class="submit">
 			<?php wp_nonce_field('bkl_send_email'); ?>
 			<input type="hidden" name="controller" value="Email">
-			<button type="submit" name="action" value="enqueue" class="button button-primary"<?php disabled($num_queued_messaged > 0); ?>>Lägg i kö</button>
+			<button type="submit" name="action" value="enqueue" class="button button-primary">Lägg i kö</button>
+		</p>
 
-			<?php if($num_queued_messaged > 0): ?>
+		<br>
+		<br>
+		<hr>
+	
+		<h2>Meddelandekö</h2>
+	
+		<?php if($num_messages): ?>
+			<span><?php echo $num_messages; ?> meddelanden</span>
+		<?php endif; ?>
+	
+		<table class="wp-list-table widefat fixed striped">
+			<thead>
+				<tr>
+					<th>Ämne</th>
+					<th>Mottagare</th>
+					<th>Skapad</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+	
+			<tbody>
+				<?php if(empty($messages)): ?>
+					<tr>
+						<td colspan="4">Inga meddelanden i kö</td>
+					</tr>
+				<?php else: ?>
+					<?php foreach($messages as $message): ?>
+						<tr>
+							<td><?php echo $message['subject']; ?></td>
+							<td><?php echo $message['recipients']; ?></td>
+							<td><?php echo Helper::date($message['time_created'])->format('j M H:i'); ?></td>
+							<td><?php echo Mailer::get_status_label($message['status']); ?></td>
+						</tr>
+					<?php endforeach; ?>
+				<?php endif; ?>
+			</tbody>
+		</table>
+
+		<br>
+	
+		<?php if($num_queued_messages > 0): ?>
+			<div class="bkl-message-queue">
 				<button type="submit" name="action" value="send" class="button button-primary">Skicka köade</button>
 				<button type="submit" name="action" value="clear" class="button">Ta bort köade</button>
-			<?php endif; ?>
-		</p>
-	</form>	
+			</div>
+		<?php endif; ?>
+	</form>
 </div>
