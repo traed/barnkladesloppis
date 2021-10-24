@@ -2,7 +2,7 @@
 /*
 	Plugin Name: Barnklädesloppis
 	Description: Plugin som hanterar barnklädesloppisens anmälningssystem.
-	Version: 1.0.1
+	Version: 1.0.2
 	Author: Mattias Forsman
 	Author URI: https://github.com/traed
 */
@@ -12,7 +12,7 @@ namespace eqhby\bkl;
 use Exception;
 
 abstract class Plugin {
-	const VERSION = '1.0.1';
+	const VERSION = '1.0.2';
 	const SLUG = 'bkl';
 	const TABLE_PREFIX = 'bkl_';
 	const FILE = __FILE__;
@@ -134,6 +134,8 @@ abstract class Plugin {
 		$tables[] = '
 			CREATE TABLE IF NOT EXISTS ' . Helper::get_table('emails') . ' (
 				id int NOT NULL AUTO_INCREMENT,
+				message_id int NOT NULL,
+				status varchar(10) NOT NULL,
 				subject varchar(128) NOT NULL,
 				message text NOT NULL,
 				recipient text NOT NULL,
@@ -141,7 +143,9 @@ abstract class Plugin {
 				time_sent datetime,
 				PRIMARY KEY (id),
 				KEY time_created (time_created),
-				KEY time_sent (time_sent)
+				KEY time_sent (time_sent),
+				KEY message_id (message_id),
+				KEY status (status)
 		) ' . $charset;
 			
 		foreach($tables as $table) {
@@ -280,7 +284,7 @@ abstract class Plugin {
 	public function send_batch_emails() {
 		try {
 			$mailer = new Mailer();
-			$batch = $mailer->get_next_batch();
+			$batch = $mailer->prepare_next_batch();
 	
 			if(!empty($batch)) {
 				Log::email('Sending batch...');

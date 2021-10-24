@@ -15,7 +15,8 @@ class Email_Controller extends Controller {
 			'order' => 'ASC'
 		]);
 
-		$num_queued_messaged = (int)$wpdb->get_var('SELECT COUNT(*) FROM ' . Helper::get_table('emails') . ' WHERE time_sent IS NULL');
+		$num_queued_messaged = Mailer::count(Mailer::STATUS_ENQUEUED);
+		$num_pending_messaged = Mailer::count(Mailer::STATUS_PENDING);
 
 		include(Plugin::PATH . '/app/views/admin/email.php');
 	}
@@ -52,7 +53,7 @@ class Email_Controller extends Controller {
 				$success = $mailer->enqueue($to, $subject, $message);
 
 				if($success) {
-					Admin::notice('Meddelanden har lagt till i kön. Köade meddelanden skickas inom ett par minuter.', 'success');
+					Admin::notice('Meddelanden har lagt till i kön. Klicka på "Skicka köade" för att börja skicka.', 'success');
 				} else {
 					Admin::notice('Meddelanden har lagt till i kön, men vissa fel inträffade. Kontrollera systemloggen för mer info.', 'warning');
 				}
@@ -68,7 +69,20 @@ class Email_Controller extends Controller {
 		}
 
 		else if($action === 'send') {
-			do_action('bkl_send_batch_emails');
+			$message_id = Mailer::get_next_batch_id(Mailer::STATUS_ENQUEUED);
+			Mailer::set_batch_status($message_id, Mailer::STATUS_PENDING);
+
+			Admin::notice('Köade meddelanden har börjat skickas. Detta kan ta några minuter.', 'success');
+
+			wp_safe_redirect($_POST['_wp_http_referer']);
+			exit;
+		}
+
+		else if($action === 'clear') {
+			Mailer::clear_queue();
+
+			Admin::notice('Köade meddelanden har tagits bort.', 'success');
+
 			wp_safe_redirect($_POST['_wp_http_referer']);
 			exit;
 		}

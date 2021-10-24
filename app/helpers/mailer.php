@@ -7,11 +7,13 @@ use MailerSend\MailerSend;
 use MailerSend\Helpers\Builder\Recipient;
 use MailerSend\Helpers\Builder\EmailParams;
 use MailerSend\Helpers\Builder\Variable;
-use PhpOffice\PhpSpreadsheet\Calculation\Logical\Boolean;
 
 class Mailer {
 	const FROM_NAME = 'Barnklädesloppis';
 	const FROM_EMAIL = 'loppis@equmeniahasselby.se';
+	const STATUS_ENQUEUED = 'enqueued';
+	const STATUS_PENDING = 'pending';
+	const STATUS_SENT = 'sent';
 
 	private $client;
 
@@ -36,13 +38,16 @@ class Mailer {
 	public function enqueue(array $to, string $subject, string $message): bool {
 		global $wpdb;
 
+		$message_id = $wpdb->get_var('SELECT MAX(message_id) + 1 FROM ' . Helper::get_table('emails'));
 		$errors = false;
 
 		foreach($to as $recipient) {
 			$data = [
-				'recipient' => serialize($recipient),
-				'subject' => $subject,
-				'message' => $message,
+				'message_id'   => $message_id,
+				'status'       => 'enqueued',
+				'recipient'    => serialize($recipient),
+				'subject'      => $subject,
+				'message'      => $message,
 				'time_created' => Helper::date('now')->format('Y-m-d H:i:s')
 			];
 			$result = $wpdb->insert(Helper::get_table('emails'), $data, ['%s', '%s', '%s', '%s']);
@@ -88,38 +93,92 @@ class Mailer {
 	}
 
 
-	public function get_next_batch(): array {
+	public function prepare_next_batch(): array {
 		global $wpdb;
 
-		$results = $wpdb->get_results('
-			SELECT *
-			FROM ' . Helper::get_table('emails') . ' 
-			WHERE time_sent IS NULL 
-			ORDER BY time_created ASC 
-			LIMIT 100
-		', ARRAY_A);
+		$message_id = self::get_next_batch_id(self::STATUS_PENDING);
 
-		$ids = [];
+		$results = $wpdb->get_results($wpdb->prepare('
+			SELECT id, recipient, subject, message
+			FROM ' . Helper::get_table('emails') . ' 
+			WHERE message_id = %d AND status = %s
+			LIMIT 100
+		', $message_id, 'pending'), ARRAY_A);
+
 		$return = [];
+		$ids = [];
 
 		if(!empty($results)) {
 			foreach($results as $result) {
+				$ids[] = (int)$result['id'];
 				$return[] = [
 					'recipient' => unserialize($result['recipient']),
-					'subject' => $result['subject'],
-					'message' => $result['message']
+					'subject'   => $result['subject'],
+					'message'   => $result['message']
 				];
-				$ids[] = (int)$result['id'];
 			}
 			
 			$wpdb->query($wpdb->prepare(
 				'UPDATE ' . Helper::get_table('emails') . '
-				SET time_sent = %s
+				SET status = %s, time_sent = %s
 				WHERE id IN (' . implode(',', $ids) . ')',
+				self::STATUS_SENT,
 				Helper::date('now')->format('Y-m-d H:i:s')
 			));
 		}
 
 		return $return;
+	}
+
+
+	static public function count($status): int {
+		global $wpdb;
+
+		if(is_array($status)) {
+			$status = implode(',', $status);
+		}
+
+		return (int)$wpdb->get_var('
+			SELECT COUNT(*)
+			FROM ' . Helper::get_table('emails') . '
+			WHERE status IN (' . $status . ')'
+		);
+	}
+
+
+	static public function set_batch_status(int $message_id, string $status): void {
+		global $wpdb;
+
+		$wpdb->update(
+			Helper::get_table('emails'),
+			['status' => $status],
+			['message_id' => $message_id],
+			['%s'],
+			['%d']
+		);
+	}
+
+
+	static public function get_next_batch_id(string $status): int {
+		global $wpdb;
+
+		return (int)$wpdb->get_var($wpdb->prepare('
+			SELECT MIN(message_id) 
+			FROM ' . Helper::get_table('emails') . ' 
+			WHERE status = %s
+		', $status));
+	}
+
+
+	static public function clear_queue(): void {
+		global $wpdb;
+
+		$wpdb->delete(
+			Helper::get_table('emails'),
+			[
+				'status' => self::STATUS_ENQUEUED
+			],
+			['%s']
+		);
 	}
 }

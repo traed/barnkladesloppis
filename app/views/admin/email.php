@@ -69,7 +69,7 @@
 				<tr>
 					<th scope="row">Meddelanden i kö</th>
 					<td>
-						<?php echo $num_queued_messaged; ?>
+						<?php echo $num_queued_messaged + $num_pending_messaged; ?>
 					</td>
 				</tr>
 			</tbody>
@@ -78,10 +78,11 @@
 		<p class="submit">
 			<?php wp_nonce_field('bkl_send_email'); ?>
 			<input type="hidden" name="controller" value="Email">
-			<button type="submit" name="action" value="enqueue" class="button button-primary">Lägg i kö</button>
+			<button type="submit" name="action" value="enqueue" class="button button-primary"<?php disabled($num_queued_messaged > 0); ?>>Lägg i kö</button>
 
 			<?php if($num_queued_messaged > 0): ?>
-				<button type="submit" name="action" value="send" class="button button-secondary">Skicka köade</button>
+				<button type="submit" name="action" value="send" class="button button-primary">Skicka köade</button>
+				<button type="submit" name="action" value="clear" class="button">Ta bort köade</button>
 			<?php endif; ?>
 		</p>
 	</form>	
