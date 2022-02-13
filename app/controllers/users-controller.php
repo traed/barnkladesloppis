@@ -48,23 +48,20 @@ class Users_Controller extends Controller {
 			'paged' => $page
 		];
 
-		if(!empty($_GET['filter_occasion'])) {
-			$occasion = Occasion::get_by_id((int)$_GET['filter_occasion']);
-			$user_ids = $occasion->get_users(false, true);
-			if(empty($user_ids)) {
-				$user_ids[] = 0;
-			}
-
-			$query['include'] = $user_ids;
-		}
-
 		if($orderby === 'meta_value' || $orderby === 'meta_value_num') {
 			$query['meta_key'] = $meta_key;
 		}
 
-		$users_query = new \WP_User_Query($query);
-		$total_items = $users_query->get_total();
-		$users = (array)$users_query->get_results();
+		if(empty($_GET['filter_occasion'])) {
+			$users_query = new \WP_User_Query($query);
+			$total_items = $users_query->get_total();
+			$users = (array)$users_query->get_results();	
+		} else {
+			$occasion = Occasion::get_by_id((int)$_GET['filter_occasion']);
+			$users = $occasion->get_users($query);
+			$total_items = $occasion->count_users();
+		}
+
 		$total_pages = ceil($total_items / 50);
 
 		include(Plugin::PATH . '/app/views/admin/users.php');
@@ -266,7 +263,7 @@ class Users_Controller extends Controller {
 				if($occasion = Occasion::get_next()) {
 					$status = sanitize_key($_POST['status']);
 					if($status !== $occasion->get_user_status($user->ID)) {
-						$result = $occasion->add_user($user->ID, $status);
+						$result = $occasion->add_user($user->ID, ['status' => $status]);
 
 						if($result === 'signed_up') {
 							Admin::notice('Användare anmäld.', 'info');
@@ -356,7 +353,7 @@ class Users_Controller extends Controller {
 					$filename = 'loppis-alla-' . $now;
 				}
 
-				Spreadsheet::export_users($users, $filename);
+				Spreadsheet::export_users($users, $filename, isset($occasion));
 			}
 
 			elseif(isset($_POST['bulk_action']) && $_POST['bulk_action'] === 'export_some' && !empty($_POST['users'])) {

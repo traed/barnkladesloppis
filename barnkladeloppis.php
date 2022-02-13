@@ -128,6 +128,7 @@ abstract class Plugin {
 				time_created datetime NOT NULL,
 				time_updated datetime NOT NULL,
 				status varchar(16) NOT NULL,
+				return_items bool NOT NULL,
 				PRIMARY KEY (occasion_id, user_id)
 		) ' . $charset;
 		

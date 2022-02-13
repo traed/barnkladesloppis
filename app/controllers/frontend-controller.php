@@ -174,7 +174,7 @@ class Frontend_Controller extends Controller {
 		if(isset($_POST['action']) && $_POST['action'] === 'sign_up' && !empty($_POST['bkl_sign_up_nonce']) && wp_verify_nonce($_POST['bkl_sign_up_nonce'], 'bkl_sign_up')) {
 			if(is_user_logged_in() && !empty($_POST['occasion_id'])) {
 				$occasion = Occasion::get_by_id((int)$_POST['occasion_id']);
-				$occasion->add_user(get_current_user_id());
+				$occasion->add_user(get_current_user_id(), ['return_items' => !empty($_POST['return_items'])]);
 			}
 
 			wp_redirect('/loppis');
@@ -187,7 +187,7 @@ class Frontend_Controller extends Controller {
 		if(isset($_POST['action']) && $_POST['action'] === 'resign' && !empty($_POST['bkl_resign_nonce']) && wp_verify_nonce($_POST['bkl_resign_nonce'], 'bkl_resign')) {
 			if(is_user_logged_in() && !empty($_POST['occasion_id'])) {
 				$occasion = Occasion::get_by_id((int)$_POST['occasion_id']);
-				$occasion->add_user(get_current_user_id(), 'none');
+				$occasion->add_user(get_current_user_id(), ['status' => 'none']);
 			}
 
 			wp_redirect('/loppis');

@@ -41,7 +41,7 @@ class Occasion_Controller extends Controller {
 	public function occasion_users_callback() {
 		global $post;
 		$occasion = Occasion::get_by_id($post->ID);
-		$users = $occasion->get_users('signed_up');
+		$users = $occasion->get_users(['status' => 'signed_up']);
 
 		?>
 		<table class="wp-list-table widefat fixed striped users">
@@ -49,6 +49,7 @@ class Occasion_Controller extends Controller {
 				<tr>
 					<th>Namn</th>
 					<th>Försäljnings-ID</th>
+					<th>Vill ha tillbaka kläder</th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
@@ -62,6 +63,7 @@ class Occasion_Controller extends Controller {
 						<tr>
 							<td><?php echo $user->get('display_name'); ?></td>
 							<td><?php echo $user->get('seller_id'); ?></td>
+							<td><?php echo $user->get('return_items') ? 'Ja' : 'Nej'; ?></td>
 							<td><a href="/wp-admin/edit.php?post_type=bkl_occasion&page=bkl_users&id=<?php echo $user->ID; ?>">Visa</a></td>
 						</tr>
 					<?php endforeach; ?>
@@ -75,7 +77,7 @@ class Occasion_Controller extends Controller {
 	public function occasion_reserve_callback() {
 		global $post;
 		$occasion = Occasion::get_by_id($post->ID);
-		$users = $occasion->get_users('reserve');
+		$users = $occasion->get_users(['status' => 'reserve']);
 
 		?>
 		<table class="wp-list-table widefat fixed striped users">

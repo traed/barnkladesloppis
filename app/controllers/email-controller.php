@@ -118,7 +118,7 @@ class Email_Controller extends Controller {
 			$status = sanitize_key($_POST['user_status']);
 			if($status === 'all') $status = false;
 
-			$users = $occasion->get_users($status);
+			$users = $occasion->get_users(['status' => $status]);
 		} elseif(strpos($code, 'seller') === 0) {
 			$user_id = (int)str_replace('seller_', '', $code);
 			$users = get_users(['include' => [$user_id]]);

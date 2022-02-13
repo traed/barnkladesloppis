@@ -155,28 +155,41 @@ class Occasion {
 	}
 
 
-	public function get_users($status = false, $only_ids = false) {
+	public function get_users($args = []): array {
 		global $wpdb;
 
-		$query = 'SELECT user_id FROM ' . Helper::get_table('occasion_users') . ' WHERE occasion_id = %d';
+		$args = wp_parse_args($args, [
+			'status' => false,
+			'only_ids' => false,
+			'role__in' => ['bkl_seller'],
+			'orderby' => 'name',
+			'order' => 'ASC',
+			'number' => -1,
+			'paged' => 1
+		]);
 
-		if($status) {
-			$query .= $status === 'none' ? ' AND status != %s' : ' AND status = %s';
-			$query = $wpdb->prepare($query, $this->get_ID(), $status);
+		$query = 'SELECT user_id, return_items FROM ' . Helper::get_table('occasion_users') . ' WHERE occasion_id = %d';
+
+		if($args['status']) {
+			$query .= $args['status'] === 'none' ? ' AND status != %s' : ' AND status = %s';
+			$query = $wpdb->prepare($query, $this->get_ID(), $args['status']);
 		} else {
 			$query = $wpdb->prepare($query, $this->get_ID());
 		}
 
-		$user_ids = $wpdb->get_col($query);
+		$result = $wpdb->get_results($query, ARRAY_A);
+		$user_ids = array_column($result, 'user_id');
 		
 		$users = [];
 		$params = [
-			'role' => 'bkl_seller',
-			'orderby' => 'name',
-			'order' => 'ASC'
+			'role__in' => $args['role'],
+			'orderby' => $args['orderby'],
+			'order' => $args['order'],
+			'number' => $args['number'],
+			'paged' => $args['paged']
 		];
 
-		if($status === 'none') {
+		if($args['status'] === 'none') {
 			if(!empty($user_ids)) $params['exclude'] = $user_ids;
 			$users = get_users($params);
 		} elseif(!empty($user_ids)) {
@@ -184,7 +197,16 @@ class Occasion {
 			$users = get_users($params);
 		}
 		
-		if($only_ids) return array_map(function($u) { return $u->ID; }, $users);
+		if($args['only_ids']) return array_map(function($u) { return $u->ID; }, $users);
+
+		foreach($users as $user) {
+			$meta_data = array_filter($result, function($m) use($user) {
+				return $m['user_id'] == $user->ID;
+			});
+			$meta_data = reset($meta_data);
+
+			$user->return_items = $meta_data['return_items'];
+		}
 
 		return $users;
 	}
@@ -223,12 +245,14 @@ class Occasion {
 	}
 
 
-	public function add_user($user_id, $status = false) {
+	public function add_user($user_id, $args = []) {
 		global $wpdb;
 		
-		if(!$status) {
-			$status = $this->count_users('signed_up') < $this->get_num_spots() ? 'signed_up' : 'reserve';
+		if(empty($args['status'])) {
+			$args['status'] = $this->count_users('signed_up') < $this->get_num_spots() ? 'signed_up' : 'reserve';
 		}
+
+		$args['return_items'] = $args['return_items'] ?? 0;
 
 		$seller_id = (int)get_user_meta($user_id, 'seller_id', true);
 		if(empty($seller_id)) {
@@ -238,13 +262,25 @@ class Occasion {
 
 		$created = Helper::date('now')->format('Y-m-d H:i:s');
 
-		$query = $wpdb->prepare('
-			INSERT INTO ' . Helper::get_table('occasion_users') . ' (occasion_id, user_id, time_created, time_updated, status)
-			VALUES (%d, %d, %s, %s, %s)
-			ON DUPLICATE KEY UPDATE time_updated = %s, status = %s
-		', $this->get_ID(), $user_id, $created, $created, $status, $created, $status);
+		$data = [
+			$this->get_ID(),
+			$user_id,
+			$created,
+			$created,
+			$args['status'],
+			$args['return_items'],
+			$created,
+			$args['status'],
+			$args['return_items']
+		];
 
-		return $wpdb->query($query) !== false ? $status : false;
+		$query = $wpdb->prepare('
+			INSERT INTO ' . Helper::get_table('occasion_users') . ' (occasion_id, user_id, time_created, time_updated, status, return_items)
+			VALUES (%d, %d, %s, %s, %s, %s)
+			ON DUPLICATE KEY UPDATE time_updated = %s, status = %s, return_items = %s
+		', $data);
+
+		return $wpdb->query($query) !== false ? $args['status'] : false;
 	}
 
 

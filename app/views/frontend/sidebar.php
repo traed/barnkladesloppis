@@ -83,22 +83,32 @@
 								<button type="button" data-target="confirmModal-<?php echo $occasion->get_ID(); ?>" class="waves-effect waves-light btn modal-trigger">Anmäl mig</button>
 
 								<div id="confirmModal-<?php echo $occasion->get_ID(); ?>" class="modal">
-									<div class="modal-content">
-										<h4>Jag vill anmäla mig som säljare</h4>
-										<?php echo apply_filters('the_content', get_option('bkl_sign_up_terms', '')); ?>
-									</div>
-									<div class="modal-footer">
-										<form method="post">
-											<label>
-												<input type="checkbox" name="terms" value="1" required>
-												<span>Jag har läst och förstått villkoren.</span>
-											</label>
+									<form method="post">
+										<div class="modal-content">
+											<h4>Jag vill anmäla mig som säljare</h4>
+											<?php echo apply_filters('the_content', get_option('bkl_sign_up_terms', '')); ?>
+											<br>
+											<p>
+												<label>
+													<input type="hidden" name="return_items" value="1">
+													<input type="checkbox" name="return_items" value="0">
+													<span>Jag vill inte ha tillbaka några kläder efter loppisen.</span>
+												</label>
+											</p>
+											<p>
+												<label>
+													<input type="checkbox" name="terms" value="1" required>
+													<span>Jag har läst och förstått villkoren.</span>
+												</label>
+											</p>
+										</div>
+										<div class="modal-footer">
 											<input type="hidden" name="bkl_sign_up_nonce" value="<?php echo wp_create_nonce('bkl_sign_up'); ?>">
 											<input type="hidden" name="occasion_id" value="<?php echo $occasion->get_ID(); ?>">
 											<input type="hidden" name="controller" value="Frontend">
 											<button type="submit" name="action" value="sign_up" class="waves-effect waves-light btn">Slutför anmälan</button>
-										</form>
-									</div>
+										</div>
+									</form>
 								</div>
 							<?php endif; ?>
 						</div><!-- .entry-header -->

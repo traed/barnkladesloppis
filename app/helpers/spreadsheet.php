@@ -7,7 +7,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Spreadsheet {
 
-	public function export_users(array $users, $filename = 'export') {
+	static public function export_users(array $users, $filename = 'export', $occasion = false) {
 		$spreadsheet = new PhpSpreadsheet();
 
 		$sheet = $spreadsheet->getActiveSheet();
@@ -18,6 +18,10 @@ class Spreadsheet {
 		$sheet->setCellValue('E1', 'Telefonnummer');
 		$sheet->setCellValue('F1', 'Har swish');
 
+		if($occasion) {
+			$sheet->setCellValue('G1', 'Vill ha tillbaka kläder');
+		}
+
 		foreach($users as $i => $user) {
 			$sheet->setCellValueByColumnAndRow(1, $i + 2, $user->get('seller_id'));
 			$sheet->setCellValueByColumnAndRow(2, $i + 2, $user->get('first_name'));
@@ -25,6 +29,10 @@ class Spreadsheet {
 			$sheet->setCellValueByColumnAndRow(4, $i + 2, $user->get('user_email'));
 			$sheet->setCellValueByColumnAndRow(5, $i + 2, $user->get('phone'));
 			$sheet->setCellValueByColumnAndRow(6, $i + 2, get_user_meta($user->ID, 'has_swish', true) ? 'Ja' : 'Nej');
+
+			if($occasion) {
+				$sheet->setCellValueByColumnAndRow(7, $i + 2, $user->get('return_items') ? 'Ja' : 'Nej');
+			}
 		}
 
 		$writer = new Xlsx($spreadsheet);
