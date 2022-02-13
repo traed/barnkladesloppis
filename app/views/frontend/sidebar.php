@@ -59,6 +59,9 @@
 							<ul class="entry-meta">
 								<li>Datum: <?php echo $occasion->get_date_start(); ?></li>
 								<li>Anmälan öppnar: <?php echo $occasion->get_date_signup() ?: 'Snart!'; ?></li>
+								<?php if($signup_closes = $occasion->get_date_signup_close()): ?>
+									<li>Anmälan stänger: <?php echo $signup_closes; ?></li>
+								<?php endif; ?>
 								<li>Inlämning: <?php echo $occasion->get_date_turnin() ?: '-'; ?></li>
 								<li>Avgift: <?php echo $occasion->get_seller_fee(); ?> kr</li>
 								<li>Platser kvar: <?php echo max(0, $occasion->get_num_spots() - $occasion->count_users('signed_up')); ?></li>
@@ -73,12 +76,15 @@
 									<p class="orange-text"><strong>Du är med på väntelistan.</strong></p>
 									<p>Det är just nu fullt på loppisen. Om en plats blir ledig meddelar vi dig.</p>
 								<?php endif; ?>
-								<form method="post">
-									<?php wp_nonce_field('bkl_resign', 'bkl_resign_nonce'); ?>
-									<input type="hidden" name="occasion_id" value="<?php echo $occasion->get_ID(); ?>">
-									<input type="hidden" name="controller" value="Frontend">
-									<button type="submit" name="action" value="resign" class="waves-effect waves-light btn">Avanmäl mig</button>
-								</form>
+
+								<?php if($occasion->is_registration_open()): ?>
+									<form method="post">
+										<?php wp_nonce_field('bkl_resign', 'bkl_resign_nonce'); ?>
+										<input type="hidden" name="occasion_id" value="<?php echo $occasion->get_ID(); ?>">
+										<input type="hidden" name="controller" value="Frontend">
+										<button type="submit" name="action" value="resign" class="waves-effect waves-light btn">Avanmäl mig</button>
+									</form>
+								<?php endif; ?>
 							<?php elseif($occasion->is_registration_open()): ?>
 								<button type="button" data-target="confirmModal-<?php echo $occasion->get_ID(); ?>" class="waves-effect waves-light btn modal-trigger">Anmäl mig</button>
 

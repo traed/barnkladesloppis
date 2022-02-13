@@ -138,10 +138,12 @@
 	
 			$date_start = strtotime($_POST['date_start']) ? $_POST['date_start'] : '';
 			$date_signup = strtotime($_POST['date_signup']) ? $_POST['date_signup'] : '';
+			$date_signup_close = strtotime($_POST['date_signup_close']) ? $_POST['date_signup_close'] : '';
 			$date_turnin = strtotime($_POST['date_turnin']) ? $_POST['date_turnin'] : '';
 	
 			update_post_meta($post_id, 'date_start', $date_start);
 			update_post_meta($post_id, 'date_signup', $date_signup);
+			update_post_meta($post_id, 'date_signup_close', $date_signup_close);
 			update_post_meta($post_id, 'date_turnin', $date_turnin);
 			update_post_meta($post_id, 'num_spots', (int)$_POST['num_spots']);
 			update_post_meta($post_id, 'seller_fee', (int)$_POST['seller_fee']);

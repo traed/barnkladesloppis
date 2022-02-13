@@ -285,9 +285,10 @@ class Occasion {
 
 
 	public function is_registration_open() {
-		$now = Helper::date('now');
+		$now = Helper::date('today');
 		$date_signup = Helper::date($this->get_date_signup());
+		$date_signup_close = Helper::date($this->get_date_signup_close());
 
-		return $now >= $date_signup;
+		return $now >= $date_signup && $now <= $date_signup_close;
 	}
 }

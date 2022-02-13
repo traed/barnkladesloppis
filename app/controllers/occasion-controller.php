@@ -8,6 +8,7 @@ class Occasion_Controller extends Controller {
 
 		$date_start = get_post_meta($post->ID, 'date_start', true) ?: '';
 		$date_signup = get_post_meta($post->ID, 'date_signup', true) ?: '';
+		$date_signup_close = get_post_meta($post->ID, 'date_signup_close', true) ?: '';
 		$date_turnin = get_post_meta($post->ID, 'date_turnin', true) ?: '';
 		$num_spots = get_post_meta($post->ID, 'num_spots', true) ?: '';
 		$seller_fee = get_post_meta($post->ID, 'seller_fee', true) ?: '';
@@ -17,6 +18,10 @@ class Occasion_Controller extends Controller {
 		<div>
 			<label for="date_signup">Anmälan öppnar</label>
 			<input type="date" name="date_signup" value="<?php echo $date_signup; ?>">
+		</div>
+		<div>
+			<label for="date_signup_close">Anmälan stänger</label>
+			<input type="date" name="date_signup_close" value="<?php echo $date_signup_close; ?>">
 		</div>
 		<div>
 			<div><label for="date_start">Startdatum</label></div>
@@ -114,6 +119,7 @@ class Occasion_Controller extends Controller {
 		$columns['num_spots'] = 'Max antal platser';
 		$columns['date_start'] = 'Startdatum';
 		$columns['date_signup'] = 'Anmälan öppnar';
+		$columns['date_signup_close'] = 'Anmälan stänger';
 		unset($columns['date']);
 
 		return $columns;
@@ -123,6 +129,7 @@ class Occasion_Controller extends Controller {
 	public function sortable_columns($columns) {
 		$columns['date_start'] = ['date', true];
 		$columns['date_signup'] = ['date', true];
+		$columns['date_signup_close'] = ['date', true];
 
 		return $columns;
 	}
@@ -146,6 +153,9 @@ class Occasion_Controller extends Controller {
 				break;
 			case 'date_signup':
 				echo $occasion->get_date_signup();
+				break;
+			case 'date_signup_close':
+				echo $occasion->get_date_signup_close();
 				break;
 		}
 	}
