@@ -192,4 +192,33 @@ class Mailer {
 				return 'Okänd';
 		}
 	}
+
+
+	static public function send_sms($to, $message) {
+		$username = get_option('bkl_sms_api_username', '');
+		$password = get_option('bkl_sms_api_password', '');
+		$to = preg_replace('/^0/', '+46', $to);
+
+		$response = wp_remote_post('https://api.46elks.com/a1/sms', [
+			'headers' => [
+				'Authorization' => 'Basic ' . base64_encode($username . ':' . $password),
+				'Content-type' => 'application/x-www-form-urlencoded'
+			],
+			'body' => [
+				'from' => 'Equmenia',
+				'to' => $to,
+				'message' => $message
+			],
+			'timeout' => 10
+		]);
+	  
+		if(is_wp_error($response) || $response['response']['code'] > 299) {
+			Log::sms('Unable to send SMS to ' . $to);
+			throw new Exception('Unable to send SMS.');
+		}
+
+		$body = json_decode($response['body'], true);
+
+		Log::sms('Sent sms to ' . $to);
+	}
 }

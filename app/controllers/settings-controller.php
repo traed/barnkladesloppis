@@ -19,6 +19,8 @@ class Settings_Controller extends Controller {
 				update_option('bkl_email_api_key', sanitize_text_field($_POST['email_api_key']));
 				update_option('bkl_recaptcha_site_key', sanitize_text_field($_POST['recaptcha_site_key']));
 				update_option('bkl_recaptcha_secret', sanitize_text_field($_POST['recaptcha_secret']));
+				update_option('bkl_sms_api_username', sanitize_text_field($_POST['sms_api_username']));
+				update_option('bkl_sms_api_password', sanitize_text_field($_POST['sms_api_password']));
 			}
 
 			Admin::notice('Inställningar sparade!', 'success');

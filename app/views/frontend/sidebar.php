@@ -109,7 +109,7 @@
 											</p>
 										</div>
 										<div class="modal-footer">
-											<input type="hidden" name="bkl_sign_up_nonce" value="<?php echo wp_create_nonce('bkl_sign_up'); ?>">
+											<?php wp_nonce_field('bkl_sign_up', 'bkl_sign_up_nonce'); ?>
 											<input type="hidden" name="occasion_id" value="<?php echo $occasion->get_ID(); ?>">
 											<input type="hidden" name="controller" value="Frontend">
 											<button type="submit" name="action" value="sign_up" class="waves-effect waves-light btn">Slutför anmälan</button>

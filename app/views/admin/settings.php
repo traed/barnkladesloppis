@@ -49,7 +49,21 @@
 					</tr>
 					<tr>
 						<th scope="row"><label for="recaptcha_secret">Hemlighet</label></th>
-						<td><input type="text" name="recaptcha_secret" id="recaptcha_secret" value="<?php echo get_option('bkl_recaptcha_secret', ''); ?>" class="regular-text"></td>
+						<td><input type="password" name="recaptcha_secret" id="recaptcha_secret" value="<?php echo get_option('bkl_recaptcha_secret', ''); ?>" class="regular-text"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h2>SMS</h2>
+			<table class="form-table" role="presentation">
+				<tbody>
+					<tr>
+						<th scope="row"><label for="sms_api_username">Användarnamn</label></th>
+						<td><input type="text" name="sms_api_username" id="sms_api_username" value="<?php echo get_option('bkl_sms_api_username', ''); ?>" class="regular-text"></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="sms_api_password">Lösenord</label></th>
+						<td><input type="password" name="sms_api_password" id="sms_api_password" value="<?php echo get_option('bkl_sms_api_password', ''); ?>" class="regular-text"></td>
 					</tr>
 				</tbody>
 			</table>

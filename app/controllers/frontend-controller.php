@@ -2,6 +2,8 @@
 
 namespace eqhby\bkl;
 
+use Exception;
+
 class Frontend_Controller extends Controller {
 	public function __construct() {
 		parent::__construct();
@@ -9,6 +11,20 @@ class Frontend_Controller extends Controller {
 		$this->add_body_class('bkl');
 		
 		do_action('bkl_frontend');
+	}
+
+
+	public function verify_phone_number($args = []) {
+		if(!empty($args['id']) && !empty($args['nonce'])) {
+			$ok = wp_verify_nonce($args['nonce'], 'verify_phone_' . $args['id']);
+
+			if($ok) {
+				update_user_meta($args['id'], 'verified_phone', Helper::date('now')->format('Y-m-d H:i:s'));
+			}
+		}
+
+		wp_redirect('/loppis');
+		exit;
 	}
 
 
@@ -173,8 +189,24 @@ class Frontend_Controller extends Controller {
 	protected function handle_post_sign_up() {
 		if(isset($_POST['action']) && $_POST['action'] === 'sign_up' && !empty($_POST['bkl_sign_up_nonce']) && wp_verify_nonce($_POST['bkl_sign_up_nonce'], 'bkl_sign_up')) {
 			if(is_user_logged_in() && !empty($_POST['occasion_id'])) {
+				$user_id = get_current_user_id();
+				$user_phone = get_user_meta($user_id, 'phone', true);
+				$verified_phone = get_user_meta($user_id, 'verified_phone', true);
+
 				$occasion = Occasion::get_by_id((int)$_POST['occasion_id']);
-				$occasion->add_user(get_current_user_id(), ['return_items' => !empty($_POST['return_items'])]);
+				$occasion->add_user($user_id, ['return_items' => !empty($_POST['return_items'])]);
+
+				if($user_phone && !$verified_phone) {
+					$id = wp_create_nonce('verify_phone_' . $user_id);
+					$url = home_url("/loppis/v/$user_id/$id");
+					$messsage = "Hej! Vänligen klicka på länken för att verifiera ditt mobilnummer för barnklädesloppisen:\n\n$url";
+
+					try {
+						Mailer::send_sms($user_phone, $messsage);
+					} catch(Exception $e) {
+						Log::error($e->getMessage());
+					}
+				}
 			}
 
 			wp_redirect('/loppis');

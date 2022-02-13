@@ -44,6 +44,7 @@
 					<th scope="col" class="manage-column column-first_name sortable <?php echo isset($_GET['orderby']) && $_GET['orderby'] === 'first_name' && isset($_GET['order']) && $_GET['order'] === 'desc' ? 'asc' : 'desc'; ?>"><a href="/wp-admin/edit.php?post_type=bkl_occasion&amp;page=bkl_users&amp;orderby=first_name&amp;order=<?php echo isset($_GET['orderby']) && $_GET['orderby'] === 'first_name' && isset($_GET['order']) && $_GET['order'] === 'asc' ? 'desc' : 'asc'; ?>"><span>Förnamn</span><span class="sorting-indicator"></span></a></th>
 					<th scope="col" class="manage-column column-last_name sortable <?php echo isset($_GET['orderby']) && $_GET['orderby'] === 'last_name' && isset($_GET['order']) && $_GET['order'] === 'desc' ? 'asc' : 'desc'; ?>"><a href="/wp-admin/edit.php?post_type=bkl_occasion&amp;page=bkl_users&amp;orderby=last_name&amp;order=<?php echo isset($_GET['orderby']) && $_GET['orderby'] === 'last_name' && isset($_GET['order']) && $_GET['order'] === 'asc' ? 'desc' : 'asc'; ?>"><span>Efternamn</span><span class="sorting-indicator"></span></a></th>
 					<th scope="col" class="manage-column column-phone"><span>Telefonnummer</span></th>
+					<th scope="col" class="manage-column column-verified"><span>Verifierad</span></th>
 					<th scope="col" class="manage-column column-seller_id sortable <?php echo isset($_GET['orderby']) && $_GET['orderby'] === 'seller_id' && isset($_GET['order']) && $_GET['order'] === 'desc' ? 'asc' : 'desc'; ?>"><a href="/wp-admin/edit.php?post_type=bkl_occasion&amp;page=bkl_users&amp;orderby=seller_id&amp;order=<?php echo isset($_GET['orderby']) && $_GET['orderby'] === 'seller_id' && isset($_GET['order']) && $_GET['order'] === 'asc' ? 'desc' : 'asc'; ?>"><span>Försäljnings-ID</span><span class="sorting-indicator"></span></a></th>
 					<?php if(!empty($_GET['filter_occasion'])): ?>
 						<th scope="col" class="manage-column column-return_items"><span>Vill ha tillbaka kläder</span></th>
@@ -68,6 +69,7 @@
 						<td class="name column-first_name" data-colname="Förnamn"><?php echo $user->get('first_name'); ?></td>
 						<td class="name column-last_name" data-colname="Efternamn"><?php echo $user->get('last_name'); ?></td>
 						<td class="phone column-phone" data-colname="Telefonnummer"><?php echo $user->get('phone'); ?></td>
+						<td class="verified column-verified" data-colname="Verifierad"><?php echo $user->get('verified_phone') ? 'Ja' : 'Nej'; ?></td>
 						<td class="phone column-seller_id" data-colname="Försäljnings-ID"><?php echo $user->get('seller_id') ?: '-'; ?></td>
 						<?php if(!empty($_GET['filter_occasion'])): ?>
 							<td class="return_items column-return_items" data-colname="Vill ha tillbaka kläder"><?php echo $user->get('return_items') ? 'Ja' : 'Nej'; ?></td>
@@ -85,6 +87,7 @@
 					<th scope="col" class="manage-column column-first_name sortable <?php echo isset($_GET['orderby']) && $_GET['orderby'] === 'first_name' && isset($_GET['order']) && $_GET['order'] === 'desc' ? 'asc' : 'desc'; ?>"><a href="/wp-admin/edit.php?post_type=bkl_occasion&amp;page=bkl_users&amp;orderby=first_name&amp;order=<?php echo isset($_GET['orderby']) && $_GET['orderby'] === 'first_name' && isset($_GET['order']) && $_GET['order'] === 'asc' ? 'desc' : 'asc'; ?>"><span>Förnamn</span><span class="sorting-indicator"></span></a></th>
 					<th scope="col" class="manage-column column-last_name sortable <?php echo isset($_GET['orderby']) && $_GET['orderby'] === 'last_name' && isset($_GET['order']) && $_GET['order'] === 'desc' ? 'asc' : 'desc'; ?>"><a href="/wp-admin/edit.php?post_type=bkl_occasion&amp;page=bkl_users&amp;orderby=last_name&amp;order=<?php echo isset($_GET['orderby']) && $_GET['orderby'] === 'last_name' && isset($_GET['order']) && $_GET['order'] === 'asc' ? 'desc' : 'asc'; ?>"><span>Efternamn</span><span class="sorting-indicator"></span></a></th>
 					<th scope="col" class="manage-column column-phone"><span>Telefonnummer</span></th>
+					<th scope="col" class="manage-column column-verified"><span>Verifierad</span></th>
 					<th scope="col" class="manage-column column-seller_id sortable <?php echo isset($_GET['orderby']) && $_GET['orderby'] === 'seller_id' && isset($_GET['order']) && $_GET['order'] === 'desc' ? 'asc' : 'desc'; ?>"><a href="/wp-admin/edit.php?post_type=bkl_occasion&amp;page=bkl_users&amp;orderby=seller_id&amp;order=<?php echo isset($_GET['orderby']) && $_GET['orderby'] === 'seller_id' && isset($_GET['order']) && $_GET['order'] === 'asc' ? 'desc' : 'asc'; ?>"><span>Försäljnings-ID</span><span class="sorting-indicator"></span></a></th>
 					<?php if(!empty($_GET['filter_occasion'])): ?>
 						<th scope="col" class="manage-column column-return_items"><span>Vill ha tillbaka kläder</span></th>

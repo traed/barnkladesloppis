@@ -32,6 +32,15 @@ namespace eqhby\bkl; ?>
 				</tr>
 
 				<tr>
+					<th scope="row"><label for="verified_phone">Verifierad</label></th>
+					<td>
+						<input type="hidden" name="verified_phone" value="0">
+						<input name="verified_phone" type="checkbox" id="verified_phone" value="1"<?php echo $user->get('verified_phone') ? ' checked' : ''; ?>>
+						<span>Användarens telefonnummer är verifierat</span>
+					</td>
+				</tr>
+
+				<tr>
 					<th scope="row"><label for="has_swish">Swish</label></th>
 					<td>
 						<input type="hidden" name="has_swish" value="0">

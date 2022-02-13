@@ -235,6 +235,12 @@ class Users_Controller extends Controller {
 				update_user_meta($user->ID, 'phone', sanitize_text_field($_POST['phone']));
 				update_user_meta($user->ID, 'has_swish', (int)$_POST['has_swish']);
 
+				if(empty($_POST['verified_phone'])) {
+					delete_user_meta($user->ID, 'verified_phone');
+				} else {
+					update_user_meta($user->ID, 'verified_phone', Helper::date('now')->format('Y-m-d H:i:s'));
+				}
+
 				$role = sanitize_key($_POST['role']);
 				if(in_array($role, ['bkl_seller', 'bkl_admin']) && !in_array($role, $user->roles)) {
 					$user->remove_role('bkl_admin');

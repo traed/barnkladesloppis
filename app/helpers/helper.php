@@ -144,4 +144,17 @@
 				return call_user_func_array(array(Helper::get_controller($controller), $method), $args);
 			}
 		}
+
+
+		static public function generate_random_string($length = 8) {
+			$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+			$ch_length = strlen($characters) - 1;
+			$str = '';
+
+			for($i = 0; $i < $length; $i++) {
+				$str .= $characters[rand(0, $ch_length)];
+			}
+
+			return $str;
+		}
 	}
