@@ -93,6 +93,14 @@ class Mailer {
 	}
 
 
+	public function send_now() {
+		$message_id = self::get_next_batch_id(self::STATUS_ENQUEUED);
+		self::set_batch_status($message_id, self::STATUS_PENDING);
+
+		do_action('bkl_send_batch_emails');
+	}
+
+
 	public function prepare_next_batch(): array {
 		global $wpdb;
 
@@ -103,7 +111,7 @@ class Mailer {
 			FROM ' . Helper::get_table('emails') . ' 
 			WHERE message_id = %d AND status = %s
 			LIMIT 100
-		', $message_id, 'pending'), ARRAY_A);
+		', $message_id, self::STATUS_PENDING), ARRAY_A);
 
 		$return = [];
 		$ids = [];

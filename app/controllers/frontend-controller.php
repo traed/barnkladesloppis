@@ -3,6 +3,7 @@
 namespace eqhby\bkl;
 
 use Exception;
+use Hidehalo\Nanoid\Client as Nanoid;
 
 class Frontend_Controller extends Controller {
 	public function __construct() {
@@ -16,7 +17,7 @@ class Frontend_Controller extends Controller {
 
 	public function verify_phone_number($args = []) {
 		if(!empty($args['id']) && !empty($args['nonce'])) {
-			$ok = wp_verify_nonce($args['nonce'], 'verify_phone_' . $args['id']);
+			$ok = get_user_meta($args['id'], 'verify_phone_' . $args['nonce'], true);
 
 			if($ok) {
 				update_user_meta($args['id'], 'verified_phone', Helper::date('now')->format('Y-m-d H:i:s'));
@@ -189,19 +190,37 @@ class Frontend_Controller extends Controller {
 	protected function handle_post_sign_up() {
 		if(isset($_POST['action']) && $_POST['action'] === 'sign_up' && !empty($_POST['bkl_sign_up_nonce']) && wp_verify_nonce($_POST['bkl_sign_up_nonce'], 'bkl_sign_up')) {
 			if(is_user_logged_in() && !empty($_POST['occasion_id'])) {
-				$user_id = get_current_user_id();
-				$user_phone = get_user_meta($user_id, 'phone', true);
+				$user = wp_get_current_user();
+				$user_id = $user->ID;
+
+				$user_phone = $user->get('phone');
 				$verified_phone = get_user_meta($user_id, 'verified_phone', true);
 
 				$occasion = Occasion::get_by_id((int)$_POST['occasion_id']);
 				$occasion->add_user($user_id, ['return_items' => !empty($_POST['return_items'])]);
 
+				$user_data = [
+					'email' => $user->get('user_email'),
+					'first' => $user->get('first_name'),
+					'last' => $user->get('last_name'),
+					'seller_id' => get_user_meta($user_id, 'seller_id', true)
+				];
+
+				$mailer = new Mailer();
+				$message = apply_filters('the_content', wp_kses_post(get_option('bkl_registration_email', '')));
+				$mailer->enqueue([$user_data], 'Du är anmäld till Barnklädesloppisen', $message);
+				$mailer->send_now();
+
 				if($user_phone && !$verified_phone) {
-					$id = wp_create_nonce('verify_phone_' . $user_id);
+					$nanoid = new Nanoid();
+
+					$id = $nanoid->generateId(8);
 					$url = home_url("/loppis/v/$user_id/$id");
 					$messsage = "Hej! Vänligen klicka på länken för att verifiera ditt mobilnummer för barnklädesloppisen:\n\n$url";
 
 					try {
+						update_user_meta($user_id, "verify_phone_$id", Helper::date('now')->format('c'));
+
 						Mailer::send_sms($user_phone, $messsage);
 					} catch(Exception $e) {
 						Log::error($e->getMessage());

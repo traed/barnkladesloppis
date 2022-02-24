@@ -16,7 +16,7 @@
 		?>
 
 		<h2>Registreringsvillkor</h2>
-		<p>Följande text vid registreringsformuläret och är tänkt att vara villkoren man godkänner för att anmäla sig. Bör innehålla följande länk till vår dataskyddspolicy: <?php echo get_privacy_policy_url(); ?></p>
+		<p>Följande text visas vid registreringsformuläret och är tänkt att vara villkoren man godkänner för att anmäla sig. Bör innehålla följande länk till vår dataskyddspolicy: <?php echo get_privacy_policy_url(); ?></p>
 		<?php
 		$settings = array(
 			'teeny' => true,
@@ -24,6 +24,19 @@
 			'tabindex' => 1
 		);
 		wp_editor(get_option('bkl_registration_terms', ''), 'registration_terms', $settings);
+		?>
+
+		<h2>Notis vid anmälning</h2>
+		<p>
+			Följande text skickas ut som ett mail till en säljare direkt när de anmäler sig till loppisen. 
+			Du kan använda följande variabler: <pre style="display: inline;">{$first}</pre>, <pre style="display: inline;">{$last}</pre>, <pre style="display: inline;">{$email}</pre>, <pre style="display: inline;">{$seller_id}</pre></p>
+		<?php
+		$settings = array(
+			'teeny' => true,
+			'textarea_rows' => 15,
+			'tabindex' => 1
+		);
+		wp_editor(get_option('bkl_registration_email', ''), 'registration_email', $settings);
 		?>
 
 		<br>
