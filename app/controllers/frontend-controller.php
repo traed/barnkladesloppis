@@ -93,10 +93,6 @@ class Frontend_Controller extends Controller {
 	protected function show_logged_in_seller() {
 		$occasions = Occasion::get_future();
 		$current_user = wp_get_current_user();
-		$status = 'none';
-		if($next_occasion = Occasion::get_next()) {
-			$status = $next_occasion->get_user_status($current_user->ID);
-		}
 
 		include(Plugin::PATH . '/app/views/frontend/start.php');
 	}

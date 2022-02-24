@@ -52,6 +52,8 @@
 			</div>
 		<?php else: ?>
 			<?php foreach($occasions as $occasion): ?>
+				<?php $status = $occasion->get_user_status($current_user->ID); ?>
+
 				<article id="post-<?php echo $occasion->get_ID(); ?>" class="<?php echo implode(' ', get_post_class('post col xl12 l6 s12', $occasion->get_ID())); ?>">
 					<div class="link-wrapper">
 						<div class="entry-header">
