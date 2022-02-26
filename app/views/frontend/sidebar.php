@@ -52,7 +52,11 @@
 			</div>
 		<?php else: ?>
 			<?php foreach($occasions as $occasion): ?>
-				<?php $status = $occasion->get_user_status($current_user->ID); ?>
+				<?php
+					if(!empty($current_user)) {
+						$status = $occasion->get_user_status($current_user->ID);
+					}
+				?>
 
 				<article id="post-<?php echo $occasion->get_ID(); ?>" class="<?php echo implode(' ', get_post_class('post col xl12 l6 s12', $occasion->get_ID())); ?>">
 					<div class="link-wrapper">
@@ -69,9 +73,9 @@
 								<li>Platser kvar: <?php echo max(0, $occasion->get_num_spots() - $occasion->count_users('signed_up')); ?></li>
 							</ul><!-- .entry-meta -->
 
-							<?php if(!is_user_logged_in()): ?>
+							<?php if(!empty($current_user)): ?>
 								<p>Du måste vara inloggad för att anmäla dig.</p>
-							<?php elseif(in_array($status, ['signed_up', 'reserve'])): ?>
+							<?php elseif(!empty($status) && in_array($status, ['signed_up', 'reserve'])): ?>
 								<?php if($status === 'signed_up'): ?>
 									<p class="green-text"><strong>Du är anmäld!</strong></p>
 								<?php else: ?>
