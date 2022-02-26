@@ -73,7 +73,7 @@
 								<li>Platser kvar: <?php echo max(0, $occasion->get_num_spots() - $occasion->count_users('signed_up')); ?></li>
 							</ul><!-- .entry-meta -->
 
-							<?php if(!empty($current_user)): ?>
+							<?php if(empty($current_user)): ?>
 								<p>Du måste vara inloggad för att anmäla dig.</p>
 							<?php elseif(!empty($status) && in_array($status, ['signed_up', 'reserve'])): ?>
 								<?php if($status === 'signed_up'): ?>
