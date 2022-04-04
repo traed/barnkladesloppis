@@ -182,7 +182,7 @@ class Occasion {
 		
 		$users = [];
 		$params = [
-			'role__in' => $args['role'],
+			'role__in' => $args['role__in'],
 			'orderby' => $args['orderby'],
 			'order' => $args['order'],
 			'number' => $args['number'],

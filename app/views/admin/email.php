@@ -42,7 +42,7 @@
 						<select name="recipients" id="recipients">
 							<option value="all">Alla</option>
 							<optgroup label="Loppis-tillfällen">
-								<?php foreach(Occasion::get_future() as $occasion): ?>
+								<?php foreach(Occasion::get_all() as $occasion): ?>
 									<option value="occasion_<?php echo $occasion->get_ID(); ?>"><?php echo $occasion->get_post_title(); ?></option>
 								<?php endforeach; ?>
 							</optgroup>

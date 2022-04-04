@@ -157,4 +157,20 @@
 
 			return $str;
 		}
+
+
+		static public function get_ordering_url($value) {
+			$order_query = !empty($_GET) ? $_GET : [];
+			$order_query['order'] = 'order';
+			$order_query['orderby'] = 'orderby';
+
+			$order_url = '/wp-admin/edit.php?' . http_build_query($order_query);
+
+			return strtr($order_url, ['=orderby' => '=' . $value, '=order' => isset($_GET['orderby']) && $_GET['orderby'] === $value && isset($_GET['order']) && $_GET['order'] === 'asc' ? '=desc' : '=asc']);
+		}
+
+
+		static public function get_ordering_class($value) {
+			return isset($_GET['orderby']) && $_GET['orderby'] === $value && isset($_GET['order']) && $_GET['order'] === 'desc' ? 'asc' : 'desc';
+		}
 	}
