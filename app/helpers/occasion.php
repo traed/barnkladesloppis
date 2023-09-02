@@ -158,6 +158,27 @@ class Occasion {
 	public function get_users($args = []): array {
 		global $wpdb;
 
+		$query = 'SELECT user_id, return_items FROM ' . Helper::get_table('occasion_users') . ' WHERE occasion_id = %d';
+		$pargs = [];
+
+		if(!empty($args['status']) && in_array($args['status'], ['reserve', 'signed_up', 'none'])) {
+			$query .= $args['status'] === 'none' ? ' AND status != %s' : ' AND status = %s';
+			$pargs['status'] = $args['status'];
+			unset($args['status']);
+		}
+
+		if(!empty($args['orderby']) && in_array($args['orderby'], ['occasion_id', 'user_id', 'time_created', 'time_updated', 'status', 'return_items'])) {
+			$query .= ' ORDER BY %1s %1s';
+			$pargs['orderby'] = $args['orderby'];
+			$pargs['order'] = strtoupper($args['order']) === 'DESC' ? 'DESC' : 'ASC';
+			unset($args['orderby']);
+			unset($args['order']);
+		}
+
+		$query = $wpdb->prepare($query, $this->get_ID(), ...$pargs);
+		$result = $wpdb->get_results($query, ARRAY_A);
+		$user_ids = array_column($result, 'user_id');
+
 		$args = wp_parse_args($args, [
 			'status' => false,
 			'only_ids' => false,
@@ -167,18 +188,6 @@ class Occasion {
 			'number' => -1,
 			'paged' => 1
 		]);
-
-		$query = 'SELECT user_id, return_items FROM ' . Helper::get_table('occasion_users') . ' WHERE occasion_id = %d';
-
-		if($args['status']) {
-			$query .= $args['status'] === 'none' ? ' AND status != %s' : ' AND status = %s';
-			$query = $wpdb->prepare($query, $this->get_ID(), $args['status']);
-		} else {
-			$query = $wpdb->prepare($query, $this->get_ID());
-		}
-
-		$result = $wpdb->get_results($query, ARRAY_A);
-		$user_ids = array_column($result, 'user_id');
 		
 		$users = [];
 		$params = [
@@ -195,6 +204,13 @@ class Occasion {
 		} elseif(!empty($user_ids)) {
 			$params['include'] = $user_ids;
 			$users = get_users($params);
+
+			if(isset($pargs['orderby'])) {
+				usort($users, function($a, $b) use($user_ids) {
+					$q = array_flip($user_ids);
+					return $q[$a->ID] - $q[$b->ID];
+				});
+			}
 		}
 		
 		if($args['only_ids']) return array_map(function($u) { return $u->ID; }, $users);
