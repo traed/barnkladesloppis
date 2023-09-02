@@ -14,6 +14,7 @@ class Settings_Controller extends Controller {
 			update_option('bkl_sign_up_terms', wp_kses_post($_POST['sign_up_terms']));
 			update_option('bkl_registration_terms', wp_kses_post($_POST['registration_terms']));
 			update_option('bkl_registration_email', wp_kses_post($_POST['registration_email']));
+			update_option('bkl_registration_email_reserve', wp_kses_post($_POST['registration_email_reserve']));
 			update_option('bkl_enable_sign_up', (int)$_POST['enable_sign_up']);
 
 			if(current_user_can('administrator')) {

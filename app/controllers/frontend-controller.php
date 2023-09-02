@@ -193,7 +193,7 @@ class Frontend_Controller extends Controller {
 				$verified_phone = get_user_meta($user_id, 'verified_phone', true);
 
 				$occasion = Occasion::get_by_id((int)$_POST['occasion_id']);
-				$occasion->add_user($user_id, ['return_items' => !empty($_POST['return_items'])]);
+				$status = $occasion->add_user($user_id, ['return_items' => !empty($_POST['return_items'])]);
 
 				$user_data = [
 					'email' => $user->get('user_email'),
@@ -203,23 +203,36 @@ class Frontend_Controller extends Controller {
 				];
 
 				$mailer = new Mailer();
-				$message = apply_filters('the_content', wp_kses_post(get_option('bkl_registration_email', '')));
-				$mailer->enqueue([$user_data], 'Du är anmäld till Barnklädesloppisen', $message);
-				$mailer->send_now();
+				$message_key = '';
+				$message_title = '';
 
-				if($user_phone && !$verified_phone) {
-					$nanoid = new Nanoid();
-
-					$id = $nanoid->generateId(8);
-					$url = home_url("/loppis/v/$user_id/$id");
-					$messsage = "Hej! Vänligen klicka på länken för att verifiera ditt mobilnummer för barnklädesloppisen:\n\n$url";
-
-					try {
-						update_user_meta($user_id, "verify_phone_$id", Helper::date('now')->format('c'));
-
-						Mailer::send_sms($user_phone, $messsage);
-					} catch(Exception $e) {
-						Log::error($e->getMessage());
+				if($status === 'signed_up') {
+					$message_key = 'bkl_registration_email';
+					$message_title = 'Du är anmäld till Barnklädesloppisen';
+				} else if($status === 'reserve') {
+					$message_key = 'bkl_registration_email_reserve';
+					$message_title = 'Du är placerad på väntelistan till Barnklädesloppisen';
+				}
+				
+				if(!empty($message_key)) {
+					$message = apply_filters('the_content', wp_kses_post(get_option($message_key, '')));
+					$mailer->enqueue([$user_data], $message_title, $message);
+					$mailer->send_now();
+	
+					if($user_phone && !$verified_phone) {
+						$nanoid = new Nanoid();
+	
+						$id = $nanoid->generateId(8);
+						$url = home_url("/loppis/v/$user_id/$id");
+						$messsage = "Hej! Vänligen klicka på länken för att verifiera ditt mobilnummer för barnklädesloppisen:\n\n$url";
+	
+						try {
+							update_user_meta($user_id, "verify_phone_$id", Helper::date('now')->format('c'));
+	
+							Mailer::send_sms($user_phone, $messsage);
+						} catch(Exception $e) {
+							Log::error($e->getMessage());
+						}
 					}
 				}
 			}

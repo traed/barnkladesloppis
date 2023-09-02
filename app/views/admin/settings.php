@@ -39,6 +39,19 @@
 		wp_editor(get_option('bkl_registration_email', ''), 'registration_email', $settings);
 		?>
 
+		<h2>Notis vid placering på väntelista</h2>
+		<p>
+			Följande text skickas ut som ett mail till en säljare direkt när de anmäler sig till loppisen men blir placerad på väntalistan. 
+			Du kan använda följande variabler: <pre style="display: inline;">{$first}</pre>, <pre style="display: inline;">{$last}</pre>, <pre style="display: inline;">{$email}</pre>, <pre style="display: inline;">{$seller_id}</pre></p>
+		<?php
+		$settings = array(
+			'teeny' => true,
+			'textarea_rows' => 15,
+			'tabindex' => 1
+		);
+		wp_editor(get_option('bkl_registration_email_reserve', ''), 'registration_email_reserve', $settings);
+		?>
+
 		<br>
 		<hr>
 
