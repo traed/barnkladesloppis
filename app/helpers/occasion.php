@@ -160,17 +160,19 @@ class Occasion {
 
 		$query = 'SELECT user_id, return_items FROM ' . Helper::get_table('occasion_users') . ' WHERE occasion_id = %d';
 		$pargs = [];
+		$custom_sort = false;
 
 		if(!empty($args['status']) && in_array($args['status'], ['reserve', 'signed_up', 'none'])) {
 			$query .= $args['status'] === 'none' ? ' AND status != %s' : ' AND status = %s';
-			$pargs['status'] = $args['status'];
+			$pargs[] = $args['status'];
 			unset($args['status']);
 		}
 
 		if(!empty($args['orderby']) && in_array($args['orderby'], ['occasion_id', 'user_id', 'time_created', 'time_updated', 'status', 'return_items'])) {
+			$custom_sort = true;
 			$query .= ' ORDER BY %1s %1s';
-			$pargs['orderby'] = $args['orderby'];
-			$pargs['order'] = strtoupper($args['order']) === 'DESC' ? 'DESC' : 'ASC';
+			$pargs[] = $args['orderby'];
+			$pargs[] = strtoupper($args['order']) === 'DESC' ? 'DESC' : 'ASC';
 			unset($args['orderby']);
 			unset($args['order']);
 		}
@@ -205,7 +207,7 @@ class Occasion {
 			$params['include'] = $user_ids;
 			$users = get_users($params);
 
-			if(isset($pargs['orderby'])) {
+			if($custom_sort) {
 				usort($users, function($a, $b) use($user_ids) {
 					$q = array_flip($user_ids);
 					return $q[$a->ID] - $q[$b->ID];
